@@ -15,8 +15,8 @@ Assets = {
     Asset( "IMAGE", "bigportraits/wendst.tex" ),
     Asset( "ATLAS", "bigportraits/wendst.xml" ),
 	
-	Asset( "IMAGE", "minimap/minimap_atlas.tex" ),
-	Asset( "ATLAS", "minimap/minimap_data.xml" ),
+	Asset( "IMAGE", "minimap/wendst.tex" ),
+	Asset( "ATLAS", "minimap/wendst.xml" ),
 }
 
 
@@ -35,5 +35,5 @@ STRINGS.CHARACTERS.WENDST = STRINGS.CHARACTERS.WENDY
 
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
-AddMinimapAtlas("minimap/minimap_data.xml")
+AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")

@@ -42,7 +42,8 @@ local start_inv = {
 
 local fn = function(inst)
 	inst.soundsname = "wendy"
-	inst.MiniMapEntity:SetIcon("wendy.tex")
+	inst.MiniMapEntity:SetIcon("wendst.tex")
+    inst.AnimState:SetBuild("wendy")
 
 	inst.components.health:SetMaxHealth(300)
 	inst.components.hunger:SetMax(150)
