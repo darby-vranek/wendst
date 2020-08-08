@@ -136,7 +136,7 @@ local function fn(Sim)
 		if not GetPlayer() or GetPlayer().prefab ~= "wendst" then inst:Remove() end 
 		
 		for k,v in pairs(Ents) do
-			if v.prefab == "abigail" then
+			if v.prefab == "abby" then
 				v:Remove()
 			end
 		end
