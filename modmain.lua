@@ -1,5 +1,7 @@
 PrefabFiles = {
 	"wendst",
+    "abby_flower",
+    "abby"
 }
 
 Assets = {

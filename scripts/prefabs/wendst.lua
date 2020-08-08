@@ -33,10 +33,11 @@ local assets = {
 }
 
 local prefabs = {
+    "abby_flower",
 }
 
 local start_inv = {
-    
+    "abby_flower",
 }
 
 
@@ -45,11 +46,18 @@ local fn = function(inst)
 	inst.MiniMapEntity:SetIcon("wendst.tex")
     inst.AnimState:SetBuild("wendy")
 
-	inst.components.health:SetMaxHealth(300)
+    -- given that this is the default, i'm not sure that I need to include it, but I can test that later
+	inst.components.health:SetMaxHealth(150)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(200)
 
-	inst.components.combat.damagemultiplier = .75
+    -- I need to see if I can include the idle animations from DST - I should in general see if I can use those
+
+    -- taken directly from DS wendy.lua
+    inst.components.sanity.night_drain_mult = TUNING.WENDY_SANITY_MULT
+    inst.components.sanity.neg_aura_mult = TUNING.WENDY_SANITY_MULT
+    inst.components.combat.damagemultiplier = TUNING.WENDY_DAMAGE_MULT
+
 end
 
 return MakePlayerCharacter("wendst", prefabs, assets, fn, start_inv)
