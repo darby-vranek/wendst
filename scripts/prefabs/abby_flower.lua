@@ -144,6 +144,12 @@ local function fn(Sim)
 		updateimage(inst)
 	end)
 
+    inst:AddComponent("summoningitem")
+    inst.UpdateInventoryActions = function(inst)
+        inst:PushEvent("inventoryitem_updatetooltip")
+    end
+    inst:UpdateInventoryActions()
+
     return inst
 end
 

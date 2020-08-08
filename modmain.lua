@@ -33,17 +33,61 @@ STRINGS.CHARACTER_QUOTES.wendst = "\"Abigail? Come back! I'm not done playing wi
 STRINGS.CHARACTERS.WENDST = STRINGS.CHARACTERS.WENDY
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
-STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
 
-STRINGS.CHARACTERS.WENDST.DESCRIBE.ABBY_FLOWER = 
-        {
-            GENERIC ="It's pretty.",
-            LONG = "It was my sister's flower. She's gone far away.",
-            MEDIUM = "I can sense Abigail's presence growing stronger.",
-            SOON = "Abigail is almost here!",
-            HAUNTED_POCKET = "Abigail is ready to play, but she needs some space.",
-            HAUNTED_GROUND = "I need to show Abigail how to play.",
-        },
+STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
+STRINGS.CHARACTERS.WENDST.DESCRIBE.ABBY_FLOWER = {
+    GENERIC ="It's still so pretty.",
+    LONG = "It was my sister's flower. She's gone far away.",
+    MEDIUM = "I can sense Abigail's spirit growing stronger.",
+    SOON = "Abigail! Are you ready to play?",
+    HAUNTED_POCKET = "Abigail is ready to play, but she needs some space.",
+    HAUNTED_GROUND = "I need to show Abigail how to play.",
+}
+
+-- actions
+
+local castsummon = function(act)
+    -- print('castsummon')
+    -- if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+    --  return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
+    -- end
+    print("castsummon")
+end
+
+local castunsummon = function(act)
+    -- if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+    --  print("action - castunsummon")
+    --  return act.doer.components.ghostlybond:Recall(false)
+    -- end
+    print("castunsummon")
+end
+
+
+-- 
+
+
+local act_castsummon = {
+    id="CASTSUMMON",
+    instant=true,
+    rmb=true,
+    mount_enabled=true,
+    priority=3,
+    fn=castsummon,
+    str="Summon",
+}
+
+local act_castunsummon = {
+    id="CASTUNSUMMON",
+    instant=true,
+    mount_enabledd=true,
+    priority=3,
+    fn=castunsummon,
+    str="Recall",
+}
+
+AddAction(act_castsummon)
+AddAction(act_castunsummon)
+
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")
