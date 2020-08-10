@@ -33,6 +33,7 @@ local assets = {
 }
 
 local prefabs = {
+    "abby",
     "abby_flower",
 }
 
@@ -40,8 +41,40 @@ local start_inv = {
     "abby_flower",
 }
 
+local function onsave(inst)
+    print("save")
+    return {
+        ghost = inst.ghost ~= nil and inst.ghost:GetSaveRecord() or nil,
+        -- ghost = inst.components.ghostlybond.ghost ~= nil and inst.components.ghostlybond.ghost:GetSaveRecord() or nil,
+    }
+end
+
+local onload = function(inst, data)
+    print("loaded wendy")
+    inst:AddComponent("ghostlybond")
+    if data.ghost ~= nil then
+        inst.components.ghostlybond.spawnghosttask:Cancel()
+        inst.components.ghostlybond.spawnghosttask = nil
+        print("ghost found")
+        inst.components.ghostlybond:InitSaved(data.ghost)
+    else
+        print("no ghost found")
+        inst.components.ghostlybond:Init("abby")
+    end
+
+    -- if data.ghost ~= nil then
+        -- print("saved ghost found")
+        -- inst.components.ghostlybond.spawnghosttask:Cancel()
+        -- inst.components.ghostlybond.spawnghosttask = nil
+        
+    -- else
+    
+    -- end
+end
+
 
 local fn = function(inst)
+    print("WENDST INIT")
 	inst.soundsname = "wendy"
 	inst.MiniMapEntity:SetIcon("wendst.tex")
     inst.AnimState:SetBuild("wendy")
@@ -50,6 +83,9 @@ local fn = function(inst)
 	inst.components.health:SetMaxHealth(150)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(200)
+
+    inst.OnSave = onsave
+    inst.OnLoad = onload
 
     -- I need to see if I can include the idle animations from DST - I should in general see if I can use those
 
