@@ -19,23 +19,23 @@ function GhostlyBond:SpawnGhost()
 	self.ghost = ghost
 end
 
-function GhostlyBond:OnLoad(data)
-	print("GhostlyBond:OnLoad")
-	print(self.ghost == nil)
-	if data ~= nil then
-		print("GhostlyBond:OnLoad | data ~= nil")
-		if data.ghost ~= nil then
-			print("GhostlyBond:OnLoad | data.ghost ~= nil")
-			print(data.ghost.prefab)
-			self.spawnghosttask:Cancel()
-			self.spawnghosttask = nil
-			-- local ghost = SpawnSaveRecord(data.ghost)
-			-- self.ghost = ghost
-			-- print(ghost)
-			-- print(ghost.prefab)
-		end
-	end
-end
+-- function GhostlyBond:OnLoad(data)
+-- 	print("GhostlyBond:OnLoad")
+-- 	print(self.ghost == nil)
+-- 	if data ~= nil then
+-- 		print("GhostlyBond:OnLoad | data ~= nil")
+-- 		if data.ghost ~= nil then
+-- 			print("GhostlyBond:OnLoad | data.ghost ~= nil")
+-- 			print(data.ghost.prefab)
+-- 			self.spawnghosttask:Cancel()
+-- 			self.spawnghosttask = nil
+-- 			-- local ghost = SpawnSaveRecord(data.ghost)
+-- 			-- self.ghost = ghost
+-- 			-- print(ghost)
+-- 			-- print(ghost.prefab)
+-- 		end
+-- 	end
+-- end
 
 function GhostlyBond:OnSave()
 	print("saved")
