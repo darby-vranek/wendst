@@ -6,30 +6,32 @@ local GhostlyBond = Class(function(self, inst)
 end)
 
 function GhostlyBond:Init(ghost_prefab)
-	print("init ghost")
+	print("GhostlyBond:Init("..ghost_prefab..")")
 	self.ghost_prefab = ghost_prefab
+
 	self.spawnghosttask = self.inst:DoTaskInTime(0, function() self:SpawnGhost() end)
 end
 
-function GhostlyBond:InitSaved(ghost_data)
-	self.ghost_prefab = ghost_data
-	self.spawnsavedghosttask = self.inst:DoTaskInTime(0, function() self:SpawnSavedGhost() end)
-end
 
 function GhostlyBond:SpawnGhost()
-	print("spawn ghost")
+	print("GhostlyBond:SpawnGhost()")
 	local ghost = SpawnPrefab(self.ghost_prefab)
 	self.ghost = ghost
 end
 
 function GhostlyBond:OnLoad(data)
-	print("load ghostlybond")
-	if data.ghost ~= nil then
-		self.spawnghosttask:Cancel()
-		self.spawnghosttask = nil
+	print("GhostlyBond:OnLoad")
+	if data ~= nil then
+		print("GhostlyBond:OnLoad | data ~= nil")
+		if data.ghost ~= nil then
+			print("GhostlyBond:OnLoad | data.ghost ~= nil")
+			print(data.ghost.prefab)
+			self.spawnghosttask:Cancel()
+			self.spawnghosttask = nil
 
-		local ghost = SpawnSaveRecord(data.ghost)
-		self.ghost = ghost
+			local ghost = SpawnSaveRecord(data.ghost)
+			self.ghost = ghost
+		end
 	end
 end
 

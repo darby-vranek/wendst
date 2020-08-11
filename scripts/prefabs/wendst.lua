@@ -52,17 +52,23 @@ end
 
 local onload = function(inst, data)
     print("loaded wendy")
-    if data.ghostlybond ~= nil then
-        print("loaded ghostlybond")
-        print(data.ghostlybond)
-        -- inst.components.ghostlybond = data.ghostlybond
-        inst:AddComponent(data.ghostlybond)
-        inst.components.ghostlybond:Init("abby")
-    else
-        print("adding ghostlybond")
-        inst:AddComponent("ghostlybond")
-        inst.components.ghostlybond:Init("abby")
-    end
+    -- print(data == nil)
+    -- print("adding ghostlybond")
+    -- inst:AddComponent("ghostlybond")
+    -- inst.components.ghostlybond:Init("abby")
+
+
+    -- if data.ghostlybond ~= nil then
+    --     print("loaded ghostlybond")
+    --     print(data.ghostlybond)
+    --     -- inst.components.ghostlybond = data.ghostlybond
+    --     inst:AddComponent(data.ghostlybond)
+    --     inst.components.ghostlybond:Init("abby")
+    -- else
+    --     print("adding ghostlybond")
+    --     inst:AddComponent("ghostlybond")
+    --     inst.components.ghostlybond:Init("abby")
+    -- end
 
     -- if inst.components.ghostlybond ~= nil then
     --     print("ghostlybond found")
@@ -104,13 +110,12 @@ local fn = function(inst)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(200)
 
-    if inst.components.ghostlybond ~= nil then
-        print("found ghostlybond")
-    else
-        print("adding ghostlybond")
-        inst:AddComponent("ghostlybond")
+    
+    inst:AddComponent("ghostlybond")
+    if inst.components.ghostlybond.ghost == nil then
+        inst.components.ghostlybond:Init("abby")
     end
-
+    
 
     -- inst.OnSave = onsave
     -- inst.OnLoad = onload
