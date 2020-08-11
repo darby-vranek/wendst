@@ -33,7 +33,7 @@ local assets = {
 }
 
 local prefabs = {
-    "abby",
+    -- "abby",
     "abby_flower",
 }
 
@@ -52,6 +52,11 @@ end
 
 local onload = function(inst, data)
     print("loaded wendy")
+    inst:AddComponent("ghostlybond")
+    if data == nil then
+        inst.components.ghostlybond:Init("abby")
+        print('init abby complete')
+    end
     -- print(data == nil)
     -- print("adding ghostlybond")
     -- inst:AddComponent("ghostlybond")
@@ -110,11 +115,12 @@ local fn = function(inst)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(200)
 
-    
+    print("adding ghostlybond")
     inst:AddComponent("ghostlybond")
-    if inst.components.ghostlybond.ghost == nil then
-        inst.components.ghostlybond:Init("abby")
-    end
+    inst.components.ghostlybond:Init("abby")
+    -- inst:DoTaskInTime(0, function() inst.components.ghostlybond:Init("abby") end)
+    
+
     
 
     -- inst.OnSave = onsave

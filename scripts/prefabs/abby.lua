@@ -59,12 +59,16 @@ local function updatedamage(inst)
     elseif GetClock():IsDusk() then
         inst.components.combat.defaultdamage = TUNING.ABIGAIL_DAMAGE_PER_SECOND 
     end
+end
 
+local function DoAppear(sg)
+    sg:GoToState("appear")
 end
    
 
 
 local function fn(Sim)
+    print("abby.fn")
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
@@ -101,6 +105,7 @@ local function fn(Sim)
     inst.components.locomotor.runspeed = TUNING.ABIGAIL_SPEED
     
     inst:SetStateGraph("SGghost")
+    inst.sg.OnStart = DoAppear
 
     
     inst:AddComponent("inspectable")

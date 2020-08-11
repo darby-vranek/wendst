@@ -8,8 +8,8 @@ end)
 function GhostlyBond:Init(ghost_prefab)
 	print("GhostlyBond:Init("..ghost_prefab..")")
 	self.ghost_prefab = ghost_prefab
-
-	self.spawnghosttask = self.inst:DoTaskInTime(0, function() self:SpawnGhost() end)
+ 
+	self.spawnghosttask = self.inst:DoTaskInTime(1, function() self:SpawnGhost() end)
 end
 
 
@@ -21,6 +21,7 @@ end
 
 function GhostlyBond:OnLoad(data)
 	print("GhostlyBond:OnLoad")
+	print(self.ghost == nil)
 	if data ~= nil then
 		print("GhostlyBond:OnLoad | data ~= nil")
 		if data.ghost ~= nil then
@@ -28,9 +29,10 @@ function GhostlyBond:OnLoad(data)
 			print(data.ghost.prefab)
 			self.spawnghosttask:Cancel()
 			self.spawnghosttask = nil
-
 			local ghost = SpawnSaveRecord(data.ghost)
 			self.ghost = ghost
+			print(ghost)
+			print(ghost.prefab)
 		end
 	end
 end
