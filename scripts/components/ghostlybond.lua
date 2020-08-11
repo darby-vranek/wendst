@@ -29,10 +29,10 @@ function GhostlyBond:OnLoad(data)
 			print(data.ghost.prefab)
 			self.spawnghosttask:Cancel()
 			self.spawnghosttask = nil
-			local ghost = SpawnSaveRecord(data.ghost)
-			self.ghost = ghost
-			print(ghost)
-			print(ghost.prefab)
+			-- local ghost = SpawnSaveRecord(data.ghost)
+			-- self.ghost = ghost
+			-- print(ghost)
+			-- print(ghost.prefab)
 		end
 	end
 end

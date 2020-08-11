@@ -71,8 +71,8 @@ local function ondeath(inst, deadthing)
     if inst and deadthing and inst.components.inventoryitem and inst:IsValid() and deadthing:IsValid() and inst.components.inventoryitem.owner == nil and not deadthing:HasTag("wall") and inst:GetDistanceSqToInst(deadthing) < 16*16 then
         if inst.components.cooldown:IsCharged() then
             GetPlayer().components.sanity:DoDelta(-TUNING.SANITY_HUGE)
-            local abigail = SpawnPrefab("abby")
-            abigail.Transform:SetPosition(inst.Transform:GetWorldPosition())
+            -- local abigail = SpawnPrefab("abby")
+            -- abigail.Transform:SetPosition(inst.Transform:GetWorldPosition())
             inst.SoundEmitter:PlaySound("dontstarve/common/ghost_spawn")
             inst:Remove()
         end
