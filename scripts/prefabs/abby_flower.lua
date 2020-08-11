@@ -8,9 +8,8 @@ local assets =
 
 }
  
-local prefabs =
+local prefabs = 
 {
-	"abby",
 }    
 
 
@@ -133,13 +132,13 @@ local function fn(Sim)
 
 
     inst:DoTaskInTime(0, function() 
-		if GetPlayer() or GetPlayer().prefab ~= "wendst" then inst:Remove() end 
+		-- if GetPlayer() or GetPlayer().prefab ~= "wendst" then inst:Remove() end 
 		
-		for k,v in pairs(Ents) do
-			if v.prefab == "abby" then
-				v:Remove()
-			end
-		end
+		-- for k,v in pairs(Ents) do
+		-- 	if v.prefab == "abby" then
+		-- 		v:Remove()
+		-- 	end
+		-- end
 		
 		updateimage(inst)
 	end)

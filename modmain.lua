@@ -47,18 +47,18 @@ STRINGS.CHARACTERS.WENDST.DESCRIBE.ABBY_FLOWER = {
 -- actions
 
 local castsummon = function(act)
-    -- print('castsummon')
-    -- if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-    --  return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
-    -- end
+    print('castsummon')
+    if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+     return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
+    end
     print("castsummon")
 end
 
 local castunsummon = function(act)
-    -- if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-    --  print("action - castunsummon")
-    --  return act.doer.components.ghostlybond:Recall(false)
-    -- end
+    if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+     print("action - castunsummon")
+     return act.doer.components.ghostlybond:Recall(false)
+    end
     print("castunsummon")
 end
 

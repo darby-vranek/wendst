@@ -33,7 +33,7 @@ local assets = {
 }
 
 local prefabs = {
-    -- "abby",
+    "abby",
     "abby_flower",
 }
 
