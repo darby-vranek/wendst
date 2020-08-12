@@ -32,11 +32,22 @@ end
 local GhostlyBond = Class(function(self, inst)
 	print("ghostlybond constructor")
 	self.inst = inst
-	self.ghost_prefab = nil
 	self.ghost = nil
+	self.ghost_prefab = nil
+
+	self.bondleveltimer = nil
+	self.bondlevelmaxtime = nil
+	self.paused = false
+
+	self.bondlevel = 1
+	self.maxbondlevel = 3
 
 	self._ghost_onremove = function(ghost) _ghost_onremove(self) end
 	self._ghost_death = function(ghost) _ghost_death(self, ghost) end
+
+	-- this seems to be a DST only thing
+	-- self.externalbondtimemultipliers = SourceModifierList(self.inst)
+
 	inst:StartUpdatingComponent(self)
 end,
 nil,
@@ -84,8 +95,14 @@ end
 
 -- bondlevel stuff goes here
 
-function GhostlyBond:Init(ghost_prefab)
+
+
+-- end bondlevel stuff
+
+function GhostlyBond:Init(ghost_prefab, bond_levelup_time)
 	print("GhostlyBond:Init("..ghost_prefab..")")
+	self.bondleveltimer = 0
+	self.bondlevelmaxtime = bond_levelup_time
 	self.ghost_prefab = ghost_prefab
  
 	self.spawnghosttask = self.inst:DoTaskInTime(1, function() self:SpawnGhost() end)
