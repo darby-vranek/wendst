@@ -32,6 +32,8 @@ STRINGS.CHARACTER_NAMES.wendst = "Wendy"
 STRINGS.CHARACTER_DESCRIPTIONS.wendst = "*Is haunted by her twin sister\n*Dabbles in Ectoherbology\n*Comfortable in the dark *Doesn't hit very hard"
 STRINGS.CHARACTER_QUOTES.wendst = "\"Abigail? Come back! I'm not done playing with you.\""
 
+STRINGS.CHARACTERS.WENDST = require "speech_wendst"
+
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
 STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
@@ -48,9 +50,9 @@ STRINGS.NAMES.ABBY = "Abigail"
 -- }
 
 -- STRINGS.CHARACTERS.WENDST.ANNOUNCE_SISTURN_FULL = "Now Abigail can find her way back to me faster."
-SPEECH_WENDY.ANNOUNCE_ABIGAIL_DEATH = "No... don't leave me alone again!"
-SPEECH_WENDY.ANNOUNCE_ABIGAIL_RETRIEVE = "I'm sorry... it's not safe for you out here."
-STRINGS.CHARACTERS.WENDST = SPEECH_WENDY
+-- SPEECH_WENDY.ANNOUNCE_ABIGAIL_DEATH = "No... don't leave me alone again!"
+-- SPEECH_WENDY.ANNOUNCE_ABIGAIL_RETRIEVE = "I'm sorry... it's not safe for you out here."
+-- STRINGS.CHARACTERS.WENDST = SPEECH_WENDY
 
 -- actions
 

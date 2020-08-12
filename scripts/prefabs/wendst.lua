@@ -46,9 +46,9 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
         inst.components.sanity:DoDelta(was_killed and (-TUNING.SANITY_MED * 2) or -TUNING.SANITY_MED)
     end
 
-    -- if inst.components.talker ~= nil then
-    --     inst.components.talker:Say(GetString(inst, was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
-    -- end
+    if inst.components.talker ~= nil then
+        inst.components.talker:Say(GetString("wendst", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
+    end
 
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
