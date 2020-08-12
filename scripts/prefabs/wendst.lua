@@ -47,7 +47,7 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     end
 
     if inst.components.talker ~= nil then
-        inst.components.talker:Say(GetString("wendst", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
+        inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
 
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
@@ -59,7 +59,7 @@ local function ghostlybond_onsummon(inst, ghost)
     end
 
     if inst.components.talker ~= nil then
-        inst.components.talker:Say(GetString("wendst", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL1"))
+        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL1"))
     end
 end
 
