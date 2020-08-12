@@ -59,7 +59,7 @@ local function ghostlybond_onsummon(inst, ghost)
     end
 
     if inst.components.talker ~= nil then
-        inst.components.talker:Say(GetString("wendst", "ANNOUNCE_ABIGAIL_SUMMON.LEVEL1"))
+        inst.components.talker:Say(GetString("wendst", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL1"))
     end
 end
 
