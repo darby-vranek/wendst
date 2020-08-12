@@ -57,7 +57,7 @@ STRINGS.NAMES.ABBY = "Abigail"
 -- actions
 
 local castsummon = function(act)
-    print('castsummon')
+    -- print('castsummon')
     if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
      return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
     end
