@@ -53,6 +53,16 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
+local function ghostlybond_onsummon(inst, ghost)
+    if inst.components.sanity ~= nil then
+        inst.components.sanity:DoDelta(TUNING.SANITY_MED)
+    end
+
+    if inst.components.talker ~= nil then
+        inst.components.talker:Say(GetString("wendst", "ANNOUNCE_ABIGAIL_SUMMON.LEVEL1"))
+    end
+end
+
 
 local fn = function(inst)
     print("WENDST INIT")
@@ -70,6 +80,7 @@ local fn = function(inst)
     print("adding ghostlybond")
     inst:AddComponent("ghostlybond")
     inst.components.ghostlybond.onrecallfn = ghostlybond_onrecall
+    inst.components.ghostlybond.onsummonfn = ghostlybond_onsummon
     inst.components.ghostlybond:Init("abby")
     -- inst:DoTaskInTime(0, function() inst.components.ghostlybond:Init("abby") end)
     
