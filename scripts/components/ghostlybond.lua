@@ -112,6 +112,7 @@ function GhostlyBond:Summon(summoningitem)
 		self.ghost:ReturnToScene()
 
 		self.notsummoned = false
+		self.summoned = true
 
 		if self.onsummonfn ~= nil then
 			self.onsummonfn(self.inst, self.ghost)

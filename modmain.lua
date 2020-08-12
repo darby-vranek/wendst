@@ -24,25 +24,33 @@ Assets = {
 
 local require = GLOBAL.require
 local STRINGS = GLOBAL.STRINGS
+local SPEECH_WENDY = STRINGS.CHARACTERS.WENDY
 
 
 STRINGS.CHARACTER_TITLES.wendst = "The Bereaved"
 STRINGS.CHARACTER_NAMES.wendst = "Wendy"
 STRINGS.CHARACTER_DESCRIPTIONS.wendst = "*Is haunted by her twin sister\n*Dabbles in Ectoherbology\n*Comfortable in the dark *Doesn't hit very hard"
 STRINGS.CHARACTER_QUOTES.wendst = "\"Abigail? Come back! I'm not done playing with you.\""
-STRINGS.CHARACTERS.WENDST = STRINGS.CHARACTERS.WENDY
+
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
-
 STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
-STRINGS.CHARACTERS.WENDST.DESCRIBE.ABBY_FLOWER = {
-    GENERIC ="It's still so pretty.",
-    LONG = "It was my sister's flower. She's gone far away.",
-    MEDIUM = "I can sense Abigail's spirit growing stronger.",
-    SOON = "Abigail! Are you ready to play?",
-    HAUNTED_POCKET = "Abigail is ready to play, but she needs some space.",
-    HAUNTED_GROUND = "I need to show Abigail how to play.",
-}
+STRINGS.NAMES.ABBY = "Abigail"
+
+-- speech
+-- SPEECH_WENDY.DESCRIBE.ABBY_FLOWER = {
+--     GENERIC ="It's still so pretty.",
+--     LONG = "It was my sister's flower. She's gone far away.",
+--     MEDIUM = "I can sense Abigail's spirit growing stronger.",
+--     SOON = "Abigail! Are you ready to play?",
+--     HAUNTED_POCKET = "Abigail is ready to play, but she needs some space.",
+--     HAUNTED_GROUND = "I need to show Abigail how to play.",
+-- }
+
+-- STRINGS.CHARACTERS.WENDST.ANNOUNCE_SISTURN_FULL = "Now Abigail can find her way back to me faster."
+SPEECH_WENDY.ANNOUNCE_ABIGAIL_DEATH = "No... don't leave me alone again!"
+SPEECH_WENDY.ANNOUNCE_ABIGAIL_RETRIEVE = "I'm sorry... it's not safe for you out here."
+STRINGS.CHARACTERS.WENDST = SPEECH_WENDY
 
 -- actions
 

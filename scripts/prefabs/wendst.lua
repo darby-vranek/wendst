@@ -41,66 +41,16 @@ local start_inv = {
     "abby_flower",
 }
 
-local function onsave(inst, data)
-    print("save")
-    -- data.ghostlybond = inst.components.ghostlybond
-    -- return {
-    --     ghostlybond = inst.components.ghostlybond
-    --     -- ghost = inst.components.ghostlybond.ghost ~= nil and inst.components.ghostlybond.ghost:GetSaveRecord() or nil,
-    -- }
-end
-
-local onload = function(inst, data)
-    print("loaded wendy")
-    inst:AddComponent("ghostlybond")
-    if data == nil then
-        inst.components.ghostlybond:Init("abby")
-        print('init abby complete')
+local function ghostlybond_onrecall(inst, ghost, was_killed)
+    if inst.components.sanity ~= nil then
+        inst.components.sanity:DoDelta(was_killed and (-TUNING.SANITY_MED * 2) or -TUNING.SANITY_MED)
     end
-    -- print(data == nil)
-    -- print("adding ghostlybond")
-    -- inst:AddComponent("ghostlybond")
-    -- inst.components.ghostlybond:Init("abby")
 
-
-    -- if data.ghostlybond ~= nil then
-    --     print("loaded ghostlybond")
-    --     print(data.ghostlybond)
-    --     -- inst.components.ghostlybond = data.ghostlybond
-    --     inst:AddComponent(data.ghostlybond)
-    --     inst.components.ghostlybond:Init("abby")
-    -- else
-    --     print("adding ghostlybond")
-    --     inst:AddComponent("ghostlybond")
-    --     inst.components.ghostlybond:Init("abby")
+    -- if inst.components.talker ~= nil then
+    --     inst.components.talker:Say(GetString(inst, was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     -- end
 
-    -- if inst.components.ghostlybond ~= nil then
-    --     print("ghostlybond found")
-    -- else
-    --     print("adding ghostlybond")
-    --     inst:AddComponent("ghostlybond")
-    --     inst.components.ghostlybond:Init("abby")
-    -- end
-
-    -- if data.ghost ~= nil then
-    --     inst.ghostlybond.spawnghosttask:Cancel()
-    --     inst.components.ghostlybond.spawnghosttask = nil
-    --     print("ghost found")
-    --     inst.components.ghostlybond:InitSaved(data.ghost)
-    -- else
-    --     print("no ghost found")
-    --     inst.components.ghostlybond:Init("abby")
-    -- end
-
-    -- if data.ghost ~= nil then
-    --     print("saved ghost found")
-    --     inst.components.ghostlybond.spawnghosttask:Cancel()
-    --     inst.components.ghostlybond.spawnghosttask = nil
-        
-    -- else
-    
-    -- end
+    inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
 
@@ -115,8 +65,11 @@ local fn = function(inst)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(200)
 
+    inst:AddTag("ghostlyfriend")
+
     print("adding ghostlybond")
     inst:AddComponent("ghostlybond")
+    inst.components.ghostlybond.onrecallfn = ghostlybond_onrecall
     inst.components.ghostlybond:Init("abby")
     -- inst:DoTaskInTime(0, function() inst.components.ghostlybond:Init("abby") end)
     
