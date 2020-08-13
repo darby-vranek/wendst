@@ -19,6 +19,14 @@ Assets = {
 	
 	Asset( "IMAGE", "minimap/wendst.tex" ),
 	Asset( "ATLAS", "minimap/wendst.xml" ),
+
+    Asset("ANIM", "anim/wendy_channel.zip"),
+    Asset("ANIM", "anim/wendy_recall.zip"),
+    Asset("ANIM", "anim/player_wendy_commune.zip"),
+    Asset("ANIM", "anim/wendy_flower_over.zip"),
+    Asset("ANIM", "anim/player_idles_wendy.zip"),
+
+    -- Asset("ANIM", "anim/wendy_flower_over.zip"),
 }
 
 
