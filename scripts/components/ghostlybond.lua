@@ -24,7 +24,7 @@ end
 
 local function _ghost_death(self)
 	print("_ghost_death")
-	-- self:SetBondLevel(1)
+	self:SetBondLevel(1)
 	self:Recall(true)
 end
 
@@ -44,6 +44,8 @@ local GhostlyBond = Class(function(self, inst)
 
 	self._ghost_onremove = function(ghost) _ghost_onremove(self) end
 	self._ghost_death = function(ghost) _ghost_death(self, ghost) end
+
+	self.bondtimemult = 4
 
 	-- this seems to be a DST only thing
 	-- self.externalbondtimemultipliers = SourceModifierList(self.inst)
@@ -95,7 +97,48 @@ end
 
 -- bondlevel stuff goes here
 
+function GhostlyBond:OnUpdate(dt)
+	if self.bondleveltimer == nil or self.pause then
+		self.inst:StopUpdatingComponent(self)
+		return
+	end
 
+	self.bondleveltimer = self.bondleveltimer + (dt * self.bondtimemult)
+	if self.bondleveltimer >= self.bondlevelmaxtime then
+		self:SetBondLevel(self.bondlevel + 1, self.bondleveltimer - self.bondlevelmaxtime)
+	end
+end
+
+function GhostlyBond:SetBondTimeMultiplier(src, mult, key)
+	self.externalbondtimemultipliers:SetModifier(src, mult, key)
+end
+
+function GhostlyBond:ResumeBonding()
+	self.pause = false
+	if self.bondleveltimer ~= nil then
+		self.inst:StartUpdatingComponent(self)
+	end
+end
+
+function GhostlyBond:PauseBonding()
+	self.pause = true
+	self.inst:StopUpdatingComponent(self)
+end
+
+function GhostlyBond:SetBondLevel(level, time, isloading)
+	time = time or 0
+	local prev_level = self.bondlevel
+	self.bondlevel = math.min(level, self.maxbondlevel)
+	self.bondleveltimer = level < self.maxbondlevel and time or nil
+	if self.bondleveltimer ~= nil and not self.paused then
+		self.inst:StartUpdatingComponent(self)
+	end
+
+		if self.onbondlevelchangefn ~= nil then
+			self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
+		end
+		self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
+end
 
 -- end bondlevel stuff
 

@@ -1,4 +1,5 @@
 local MakePlayerCharacter = require "prefabs/player_common"
+-- local TUNING = GLOBAL.TUNING
 
 
 local assets = {
@@ -41,6 +42,8 @@ local start_inv = {
     "abby_flower",
 }
 
+-- listeners
+
 local function ghostlybond_onrecall(inst, ghost, was_killed)
     if inst.components.sanity ~= nil then
         inst.components.sanity:DoDelta(was_killed and (-TUNING.SANITY_MED * 2) or -TUNING.SANITY_MED)
@@ -59,7 +62,17 @@ local function ghostlybond_onsummon(inst, ghost)
     end
 
     if inst.components.talker ~= nil then
-        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL1"))
+        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL"..inst.components.ghostlybond.bondlevel))
+    end
+end
+
+local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloading)
+    inst._bondlevel:set(level)
+
+    if not isloading and inst.components.talker ~= nil and level > 1 then
+        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..level))
+        -- that's what I'd use to do the flowerover anim
+        -- OnBondLevelDirty(inst)
     end
 end
 
@@ -79,9 +92,10 @@ local fn = function(inst)
 
     print("adding ghostlybond")
     inst:AddComponent("ghostlybond")
+    inst.components.ghostlybond.onbondlevelchangefn = ghostlybond_onlevelchange
     inst.components.ghostlybond.onrecallfn = ghostlybond_onrecall
     inst.components.ghostlybond.onsummonfn = ghostlybond_onsummon
-    inst.components.ghostlybond:Init("abby")
+    inst.components.ghostlybond:Init("abby", TUNING.TOTAL_DAY_TIME)
     -- inst:DoTaskInTime(0, function() inst.components.ghostlybond:Init("abby") end)
     
 
