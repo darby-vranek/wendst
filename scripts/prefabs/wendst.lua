@@ -3,6 +3,8 @@ local MakePlayerCharacter = require "prefabs/player_common"
 
 
 local assets = {
+    Asset("SOUND", "sound/wendy.fsb"),
+
 	Asset( "ANIM", "anim/player_basic.zip" ),
     Asset( "ANIM", "anim/player_idles_shiver.zip" ),
     Asset( "ANIM", "anim/player_actions.zip" ),
@@ -30,12 +32,19 @@ local assets = {
     Asset( "SOUND", "sound/wilson.fsb" ),
     Asset( "ANIM", "anim/beard.zip" ),
 
+    Asset("ANIM", "anim/wendy_flower_over.zip"),
+    Asset("ANIM", "anim/player_wendy_commune.zip"),
+    Asset("ANIM", "anim/wendy_recall.zip"),
+    Asset("ANIM", "anim/wendy_channel.zip"),
+
     Asset( "ANIM", "anim/wendy.zip" ),
 }
 
 local prefabs = {
     "abby",
     "abby_flower",
+    "abigailsummonfx",
+    "abigailunsummonfx",
 }
 
 local start_inv = {

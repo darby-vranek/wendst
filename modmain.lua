@@ -1,8 +1,11 @@
+
+
 PrefabFiles = {
 	"wendst",
     "abby_flower",
     "abby"
 }
+
 
 Assets = {
     Asset( "IMAGE", "images/saveslot_portraits/wendst.tex" ),
@@ -26,7 +29,7 @@ Assets = {
     Asset("ANIM", "anim/wendy_flower_over.zip"),
     Asset("ANIM", "anim/player_idles_wendy.zip"),
 
-    -- Asset("ANIM", "anim/wendy_flower_over.zip"),
+    Asset("SOUND", "sound/wendy.fsb"),    
 }
 
 
@@ -34,6 +37,9 @@ local require = GLOBAL.require
 local TUNING = GLOBAL.TUNING
 local STRINGS = GLOBAL.STRINGS
 local SPEECH_WENDY = STRINGS.CHARACTERS.WENDY
+
+-- require("stategraphs/SGwendst")
+
 
 
 STRINGS.CHARACTER_TITLES.wendst = "The Bereaved"
@@ -183,6 +189,12 @@ local act_castunsummon = {
 
 AddAction(act_castsummon)
 AddAction(act_castunsummon)
+
+-- require("stategraphs/SGwendst")
+
+-- AddStategraphActionHandler("wilson", act_castsummon)
+-- AddStategraphActionHandler("wilson", actionhandler)
+-- AddStategraphActionHandler("wilson", actionhandler)
 
 
 AddMinimapAtlas("minimap/wendst.xml")
