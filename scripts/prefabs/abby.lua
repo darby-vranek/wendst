@@ -33,6 +33,53 @@ local prefabs =
 -- require "brains/abbybrain"
 require "brains/abigailbrain"
 
+local function UpdateGhostlyBondLevel(inst, level)
+    local max_health = level == 3 and TUNING.ABIGAIL_HEALTH_LEVEL3
+                    or level == 2 and TUNING.ABIGAIL_HEALTH_LEVEL2
+                    or TUNING.ABIGAIL_HEALTH_LEVEL1
+
+    local health_comp = inst.components.health
+    if health_comp ~= nil then
+        if health_comp:IsDead() then
+            health_comp.maxhealth = max_health
+        else
+            local health_percent = health_comp:GetPercent()
+            health_comp:SetMaxHealth(max_health)
+            health_comp:SetPercent(health_percent, true)
+        end
+
+        if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil then
+            inst._playerlink.components.pethealthbar:SetMaxHealth(max_health)
+        end
+    end
+
+    local light_vals = TUNING.ABIGAIL_LIGHTING[level] or TUNING.ABIGAIL_LIGHTING[1]
+    if light_vals.r ~= 0 then
+        inst.Light:Enable(not inst.inlimbo)
+        inst.Light:SetRadius(light_vals.r)
+        inst.Light:SetIntensity(light_vals.i)
+        inst.Light:SetFalloff(light_vals.f)
+    else
+        inst.Light:Enable(false)
+    end
+    inst.AnimState:SetLightOverride(light_vals.l)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local function Retarget(inst)
 
     local newtarget = FindEntity(inst, 20, function(guy)
