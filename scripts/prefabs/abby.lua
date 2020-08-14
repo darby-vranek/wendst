@@ -1,16 +1,36 @@
 require "stategraphs/SGghost"
 
+-- local assets =
+-- {
+-- 	Asset("ANIM", "anim/ghost.zip"),
+-- 	Asset("ANIM", "anim/ghost_wendy_build.zip"),
+-- 	Asset("SOUND", "sound/ghost.fsb"),
+-- }
+
+-- local prefabs = 
+-- {
+-- }
+
 local assets =
 {
-	Asset("ANIM", "anim/ghost.zip"),
-	Asset("ANIM", "anim/ghost_wendy_build.zip"),
-	Asset("SOUND", "sound/ghost.fsb"),
+    Asset("ANIM", "anim/player_ghost_withhat.zip"),
+    Asset("ANIM", "anim/ghost_abigail_build.zip"),
+    Asset("ANIM", "anim/ghost_abigail.zip"),
+    Asset("SOUND", "sound/ghost.fsb"),
 }
 
 local prefabs = 
 {
+    "abigail_attack_fx",
+    "abigail_attack_fx_ground",
+    "abigail_retaliation",
+    "abigailforcefield",
+    "abigaillevelupfx",
+    "abigail_vex_debuff",
 }
  
+-- commenting this out for now because I haven't written abbybrain
+-- require "brains/abbybrain"
 require "brains/abigailbrain"
 
 local function Retarget(inst)
