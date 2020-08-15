@@ -1,5 +1,5 @@
 
-require "stategraphs/SGghost"
+require "stategraphs/SGabby"
 
 -- local assets =
 -- {
@@ -49,9 +49,9 @@ local function UpdateGhostlyBondLevel(inst, level)
             health_comp:SetPercent(health_percent, true)
         end
 
-        if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil then
-            inst._playerlink.components.pethealthbar:SetMaxHealth(max_health)
-        end
+        -- if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil then
+        --     inst._playerlink.components.pethealthbar:SetMaxHealth(max_health)
+        -- end
     end
 
     local light_vals = TUNING.ABIGAIL_LIGHTING[level] or TUNING.ABIGAIL_LIGHTING[1]
@@ -884,8 +884,8 @@ end
 
 
 
-return Prefab("abby", fn, assets, prefabs)
-       -- Prefab("abigail_retaliation", retaliationattack_fn, {Asset("ANIM", "anim/abigail_shield.zip")} ),
+return Prefab("abby", fn, assets, prefabs),
+       Prefab("abigail_retaliation", retaliationattack_fn, {Asset("ANIM", "anim/abigail_shield.zip")} )
        -- Prefab("abigail_vex_debuff", abigail_vex_debuff_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")}, {"abigail_vex_hit"} ),
        -- Prefab("abigail_vex_hit", abigail_vex_hit_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")} )
        

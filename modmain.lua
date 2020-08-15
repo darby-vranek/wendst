@@ -188,9 +188,14 @@ local castunsummon = function(act)
 end
 
 local communewithsummoned = function(act)
+    print("commune act")
     if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
         return act.doer.components.ghostlybond:ChangeBehaviour()
     end
+end
+
+local communestr = function(act)
+    return act.doer:HasTag("has_aggressive_follower") and "Soothe" or "Rile Up"
 end
 
 -- 
@@ -221,7 +226,8 @@ local act_communewithsummoned = {
     mount_enabledd=true,
     priority=3,
     fn=communewithsummoned,
-    str="Commune",
+    -- str="Commune",
+    strfn=communestr,
 }
 
 

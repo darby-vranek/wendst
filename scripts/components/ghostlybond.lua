@@ -156,6 +156,7 @@ function GhostlyBond:SpawnGhost()
 	print("GhostlyBond:SpawnGhost()")
 	local ghost = SpawnPrefab(self.ghost_prefab)
 	self.ghost = ghost
+	ghost:LinkToPlayer(self.inst)
 
 	self.inst:ListenForEvent("onremove", self._ghost_onremove, ghost)
     self.inst:ListenForEvent("death", self._ghost_death, ghost)

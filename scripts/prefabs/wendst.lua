@@ -124,16 +124,17 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
--- local function ghostlybond_changebehaviour(inst, ghost)
---  -- todo: toggle abigail between defensive and offensive
---     if ghost.is_defensive then
---         ghost:BecomeAggressive()
---     else
---         ghost:BecomeDefensive()
---     end
-    
---  return true
--- end
+local function ghostlybond_changebehaviour(inst, ghost)
+ -- todo: toggle abigail between defensive and offensive
+    if ghost.is_defensive then
+        print("ghost:BecomeAggressive()")
+        ghost:BecomeAggressive()
+    else
+        print("ghost:BecomeDefensive()")
+        ghost:BecomeDefensive()
+    end
+    return true
+end
 
 -- local function update_sisturn_state(inst, is_active)
 --  if inst.components.ghostlybond ~= nil then
@@ -194,7 +195,7 @@ local function fn(inst)
     inst.components.ghostlybond.onbondlevelchangefn = ghostlybond_onlevelchange
     inst.components.ghostlybond.onsummonfn = ghostlybond_onsummon
     inst.components.ghostlybond.onrecallfn = ghostlybond_onrecall
-    -- inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
+    inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
     inst.components.ghostlybond:Init("abby", TUNING.ABIGAIL_BOND_LEVELUP_TIME)
 
     inst.components.combat.customdamagemultfn = CustomCombatDamage
