@@ -3,7 +3,7 @@
 PrefabFiles = {
 	"wendst",
     "abby_flower",
-    "abby"
+    "abby",
 }
 
 
@@ -28,6 +28,7 @@ Assets = {
     Asset("ANIM", "anim/player_wendy_commune.zip"),
     Asset("ANIM", "anim/wendy_flower_over.zip"),
     Asset("ANIM", "anim/player_idles_wendy.zip"),
+    Asset("ANIM", "anim/abigail_shield.zip"),
 
     Asset("SOUND", "sound/wendy.fsb"),    
 }
@@ -98,6 +99,11 @@ SPEECH_WENDY.DESCRIBE.ABBY =
     },
 }
 
+SPEECH_WENDY.COMMUNEWITHSUMMONED = {
+    MAKE_AGGRESSIVE = "Rile Up",
+    MAKE_DEFENSIVE = "Soothe",
+}
+
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
 local seg_time = TUNING.SEG_TIME
@@ -109,8 +115,7 @@ TUNING.ABIGAIL_HEALTH_LEVEL1 = TUNING.WILSON_HEALTH*1
 TUNING.ABIGAIL_HEALTH_LEVEL2 = TUNING.WILSON_HEALTH*2
 TUNING.ABIGAIL_HEALTH_LEVEL3 = TUNING.WILSON_HEALTH*4
 TUNING.ABIGAIL_FORCEFIELD_ABSORPTION = 1.0
-TUNING.ABIGAIL_DAMAGE = 
-{
+TUNING.ABIGAIL_DAMAGE = {
     day = 15,
     dusk = 25,
     night = 40,
@@ -182,6 +187,11 @@ local castunsummon = function(act)
     print("castunsummon")
 end
 
+local communewithsummoned = function(act)
+    if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+        return act.doer.components.ghostlybond:ChangeBehaviour()
+    end
+end
 
 -- 
 
@@ -205,8 +215,20 @@ local act_castunsummon = {
     str="Recall",
 }
 
+local act_communewithsummoned = {
+    id="COMMUNEWITHSUMMONED",
+    instant=true,
+    mount_enabledd=true,
+    priority=3,
+    fn=communewithsummoned,
+    str="Commune",
+}
+
+
+
 AddAction(act_castsummon)
 AddAction(act_castunsummon)
+AddAction(act_communewithsummoned)
 
 -- require("stategraphs/SGwendst")
 

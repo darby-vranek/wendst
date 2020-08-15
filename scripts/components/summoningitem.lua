@@ -4,8 +4,10 @@ end)
 
 function SummoningItem:CollectInventoryActions(doer, actions)
 	-- print('registering summoning item')
-	if doer.components.ghostlybond ~= nil and doer.components.ghostlybond.notsummoned then
-	table.insert(actions, ACTIONS.CASTSUMMON)
+	if doer:HasTag("ghostfriend_notsummoned") then
+		table.insert(actions, ACTIONS.CASTSUMMON)
+	elseif doer:HasTag("ghostfriend_summoned") then
+		table.insert(actions, ACTIONS.COMMUNEWITHSUMMONED)
 	end
 end
 

@@ -1,3 +1,4 @@
+
 require "stategraphs/SGghost"
 
 -- local assets =
@@ -65,7 +66,9 @@ local function UpdateGhostlyBondLevel(inst, level)
     inst.AnimState:SetLightOverride(light_vals.l)
 end
 
+-- just went with a hardcoded value not sure why tuning isn't working
 local ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW * TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
+
 local function IsWithinDefensiveRange(inst)
     return inst._playerlink and inst:GetDistanceSqToInst(inst._playerlink) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ
 end
@@ -548,7 +551,7 @@ end
 --     return inst
 -- end
 
-local function fn()
+local function fn(Sim)
     local inst = CreateEntity()
     local trans = inst.entity:AddTransform()
     local anim = inst.entity:AddAnimState()
@@ -570,8 +573,8 @@ local function fn()
     inst:AddTag("abby")
     inst:AddTag("NOBLOCK")
 
-    inst:AddTag("trader") --trader (from trader component) added to pristine state for optimization
-    inst:AddTag("ghostlyelixirable") -- for ghostlyelixirable component
+    -- inst:AddTag("trader") --trader (from trader component) added to pristine state for optimization
+    -- inst:AddTag("ghostlyelixirable") -- for ghostlyelixirable component
 
     MakeGhostPhysics(inst, 1, .5)
 
@@ -597,7 +600,7 @@ local function fn()
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
     inst.components.locomotor.walkspeed = TUNING.ABIGAIL_SPEED*.5
     inst.components.locomotor.runspeed = TUNING.ABIGAIL_SPEED
-    inst.components.locomotor.pathcaps = { allowocean = true }
+    -- inst.components.locomotor.  = { allowocean = true }
 
     inst:SetStateGraph("SGabigail")
     inst.sg.OnStart = DoAppear
@@ -848,6 +851,27 @@ local function abigail_vex_debuff_fn()
     return inst
 end
 
+local function abigail_vex_hit_fn()
+    local inst = CreateEntity()
+
+    inst:AddTag("CLASSIFIED")
+    --[[Non-networked entity]]
+    inst.entity:AddTransform()
+    inst.entity:AddAnimState()
+
+    inst.AnimState:SetBank("abigail_debuff_fx")
+    inst.AnimState:SetBuild("abigail_debuff_fx")
+
+    inst.AnimState:PlayAnimation("vex_hit")
+    inst.AnimState:SetFinalOffset(3)
+
+    inst:AddTag("FX")
+
+    inst.persists = false
+    inst:ListenForEvent("animover", inst.Remove)
+
+    return inst
+end
 
 
 
@@ -860,7 +884,8 @@ end
 
 
 
-
-
-
-return Prefab( "common/monsters/abby", fn, assets, prefabs ) 
+return Prefab("abby", fn, assets, prefabs)
+       -- Prefab("abigail_retaliation", retaliationattack_fn, {Asset("ANIM", "anim/abigail_shield.zip")} ),
+       -- Prefab("abigail_vex_debuff", abigail_vex_debuff_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")}, {"abigail_vex_hit"} ),
+       -- Prefab("abigail_vex_hit", abigail_vex_hit_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")} )
+       

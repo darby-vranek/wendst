@@ -18,7 +18,7 @@ local assets =
 
 local prefabs =
 {
-    "abigail",
+    "abby",
     -- "lavaarena_abigail",
     "abby_flower",
     "abigailsummonfx",

@@ -218,5 +218,11 @@ function GhostlyBond:RecallComplete()
 	end
 end
 
+function GhostlyBond:ChangeBehaviour()
+	if self.ghost ~= nil and self.summoned and self.changebehaviourfn ~= nil then
+		return self.changebehaviourfn(self.inst, self.ghost)
+	end
+	return false
+end
 
 return GhostlyBond
