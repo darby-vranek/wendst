@@ -704,6 +704,8 @@ local function fn(Sim)
     inst:ListenForEvent( "nighttime", function() inst:UpdateDamage() end , GetWorld())
     inst:UpdateDamage()
 
+    inst:UpdateDamage()
+
     
 
     inst._on_ghostlybond_level_change = function(player, data) on_ghostlybond_level_change(inst, player, data) end
@@ -736,6 +738,8 @@ local function SetRetaliationTarget(inst, target)
 end
 
 local function DoRetaliationDamage(inst)
+    print("local function DoRetaliationDamage(inst)")
+    print(target)
     local target = inst._RetaliationTarget
     if target ~= nil and target:IsValid() and not target.inlimbo and target.components.combat ~= nil then
         target.components.combat:GetAttacked(inst, TUNING.GHOSTLYELIXIR_RETALIATION_DAMAGE)

@@ -19,7 +19,7 @@ local function startaura(inst)
     local attack_anim = "attack" .. tostring(inst.attack_level or 1)
 
     inst.attack_fx = SpawnPrefab("abigail_attack_fx")
-    -- inst:AddChild(inst.attack_fx)
+    inst:AddChild(inst.attack_fx)
     inst.attack_fx.AnimState:PlayAnimation(attack_anim .. "_pre")
     inst.attack_fx.AnimState:PushAnimation(attack_anim .. "_loop", true)
     -- local skin_build = inst:GetSkinBuild()

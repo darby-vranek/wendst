@@ -4,6 +4,7 @@ PrefabFiles = {
 	"wendst",
     "abby_flower",
     "abby",
+    'abigail_attack_fx',
 }
 
 
@@ -226,8 +227,8 @@ local act_communewithsummoned = {
     mount_enabledd=true,
     priority=3,
     fn=communewithsummoned,
-    -- str="Commune",
-    str=communestr,
+    str="Commune",
+    -- str=communestr,
 }
 
 

@@ -48,7 +48,7 @@ local function normal_fn()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     inst.entity:AddLight()
-    inst.entity:AddNetwork()
+    -- inst.entity:AddNetwork()
 
     inst.AnimState:SetBank("abigail_attack_fx")
     inst.AnimState:SetBuild("abigail_attack_fx")
@@ -57,8 +57,8 @@ local function normal_fn()
     --     return inst
     -- end
 
-    inst.persits = false
-    -- inst.kill_fx = normal_kill_fx
+    -- inst.persits = false
+    inst.kill_fx = normal_kill_fx
 
     return inst
 end

@@ -198,7 +198,7 @@ local function fn(inst)
     inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
     inst.components.ghostlybond:Init("abby", TUNING.ABIGAIL_BOND_LEVELUP_TIME)
 
-    inst.components.combat.customdamagemultfn = CustomCombatDamage
+    -- inst.components.combat.customdamagemultfn = CustomCombatDamage
 
     -- inst:AddTag("elixirbrewer")
 
