@@ -12,7 +12,8 @@ local function startaura(inst)
     end
 
     inst.Light:SetColour(255/255, 32/255, 32/255)
-    inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/attack_LP", "angry")
+    -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/attack_LP", "angry")
+    inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_attack_LP", "angry")
     inst.AnimState:SetMultColour(207/255, 92/255, 92/255, 1)
 
     local attack_anim = "attack" .. tostring(inst.attack_level or 1)
@@ -21,10 +22,10 @@ local function startaura(inst)
     inst:AddChild(inst.attack_fx)
     inst.attack_fx.AnimState:PlayAnimation(attack_anim .. "_pre")
     inst.attack_fx.AnimState:PushAnimation(attack_anim .. "_loop", true)
-    local skin_build = inst:GetSkinBuild()
-    if skin_build ~= nil then
-        inst.attack_fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
-    end
+    -- local skin_build = inst:GetSkinBuild()
+    -- if skin_build ~= nil then
+    --     inst.attack_fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
+    -- end
     
 --   inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
 --   inst:AddChild(inst.attack_fx_ground)

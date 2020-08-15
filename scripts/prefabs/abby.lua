@@ -30,9 +30,8 @@ local prefabs =
     "abigail_vex_debuff",
 }
  
--- commenting this out for now because I haven't written abbybrain
--- require "brains/abbybrain"
-local brain = require("brains/abigailbrain")
+
+local brain = require("brains/abbybrain")
 
 local function UpdateGhostlyBondLevel(inst, level)
     local max_health = level == 3 and TUNING.ABIGAIL_HEALTH_LEVEL3
@@ -66,14 +65,14 @@ local function UpdateGhostlyBondLevel(inst, level)
     inst.AnimState:SetLightOverride(light_vals.l)
 end
 
--- just went with a hardcoded value not sure why tuning isn't working
+
 local ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW * TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
 
 local function IsWithinDefensiveRange(inst)
     return inst._playerlink and inst:GetDistanceSqToInst(inst._playerlink) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ
 end
 
-local COMBAT_MUSHAVE_TAGS = { "_combat", "_health" }
+local COMBAT_MUSHAVE_TAGS = { "combat", "health" }
 local COMBAT_CANTHAVE_TAGS = { "INLIMBO", "noauradamage" }
 
 local COMBAT_MUSTONEOF_TAGS_AGGRESSIVE = { "monster", "prey", "insect", "hostile", "character", "animal" }
@@ -87,7 +86,7 @@ local function HasFriendlyLeader(inst, target)
         local target_leader = (target.components.follower ~= nil) and target.components.follower.leader or nil
 
         if target_leader and target_leader.components.inventoryitem then
-            target_leader = target_leader.components.inventoryitem:GetGrandOwner()
+            target_leader = target_leader.components.inventoryitem.owner
             -- Don't attack followers if their follow object has no owner
             if target_leader == nil then
                 return true
@@ -215,8 +214,8 @@ local function OnAttacked(inst, data)
     --     if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
     --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
     --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
-    --             local retaliation = SpawnPrefab("abigail_retaliation")
-    --             retaliation:SetRetaliationTarget(data.attacker)
+                local retaliation = SpawnPrefab("abigail_retaliation")
+                retaliation:SetRetaliationTarget(data.attacker)
     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
     --         else
     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
@@ -237,6 +236,33 @@ end
 --         inst.components.combat:SetTarget(attacker)
 --     end
 -- end
+
+local function OnAttacked(inst, data)
+    if data.attacker == nil then
+        inst.components.combat:SetTarget(nil)
+    elseif not data.attacker:HasTag("noauradamage") then
+        if not inst.is_defensive then
+            inst.components.combat:SetTarget(data.attacker)
+        elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
+            -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
+            inst.components.combat:SetTarget(data.attacker)
+        end
+    end
+
+    -- if inst.components.debuffable:HasDebuff("forcefield") then
+    if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
+        -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+        -- if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
+            local retaliation = SpawnPrefab("abigail_retaliation")
+            retaliation:SetRetaliationTarget(data.attacker)
+            -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+        -- else
+            -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+        -- end
+    end
+
+    -- StartForceField(inst)
+end
 
 local function OnBlocked(inst, data)
     if data ~= nil and inst._playerlink ~= nil and data.attacker == inst._playerlink then
@@ -371,20 +397,21 @@ end
 -- commenting out
 local function ApplyDebuff(inst, data)
     local target = data ~= nil and data.target
-    if target ~= nil then
-        if target.components.debuffable == nil then
-            target:AddComponent("debuffable")
-        end
-        -- local debuff = target.components.debuffable:AddDebuff("abigail_vex_debuff", "abigail_vex_debuff")
+    -- if target ~= nil then
+    --     if target.components.debuffable == nil then
+    --         target:AddComponent("debuffable")
+    --     end
+    --     -- local debuff = target.components.debuffable:AddDebuff("abigail_vex_debuff", "abigail_vex_debuff")
 
-        -- local skin_build = inst:GetSkinBuild()
-        -- if skin_build ~= nil and debuff ~= nil then
-        --     debuff.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
-        -- end
-    end
+    --     -- local skin_build = inst:GetSkinBuild()
+    --     -- if skin_build ~= nil and debuff ~= nil then
+    --     --     debuff.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
+    --     -- end
+    -- end
 end
 
 local function linktoplayer(inst, player)
+    -- player = player or GetPlayer()
     -- inst.persists = false
     inst._playerlink = player
 
@@ -506,7 +533,7 @@ end
 --     inst:AddTag("abby")
 
 --     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
---     inst.components.locomotor.walkspeed = TUNING.ABIGAIL_SPEED*.5
+--     inst.components.locomotor.walkspeed = TUNING.SGab*.5
 --     inst.components.locomotor.runspeed = TUNING.ABIGAIL_SPEED
     
 --     inst:SetStateGraph("SGghost")
@@ -602,7 +629,7 @@ local function fn(Sim)
     inst.components.locomotor.runspeed = TUNING.ABIGAIL_SPEED
     -- inst.components.locomotor.  = { allowocean = true }
 
-    inst:SetStateGraph("SGabigail")
+    inst:SetStateGraph("SGabby")
     inst.sg.OnStart = DoAppear
 
     inst:AddComponent("inspectable")
@@ -661,6 +688,7 @@ local function fn(Sim)
     inst.IsWithinDefensiveRange = IsWithinDefensiveRange
 
     inst.LinkToPlayer = linktoplayer
+    -- inst.LinkToPlayer()
     
 
     inst.is_defensive = true
@@ -763,6 +791,7 @@ local function do_hit_fx(inst)
     fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
 end
 
+-- this may the issue, as hitevent doesn't exist in DS
 local function on_target_attacked(inst, target, data)
     if data ~= nil and data.attacker ~= nil and data.attacker:HasTag("ghostlyfriend") then
         inst.hitevent:push()
@@ -885,7 +914,7 @@ end
 
 
 return Prefab("abby", fn, assets, prefabs),
-       Prefab("abigail_retaliation", retaliationattack_fn, {Asset("ANIM", "anim/abigail_shield.zip")} )
-       -- Prefab("abigail_vex_debuff", abigail_vex_debuff_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")}, {"abigail_vex_hit"} ),
-       -- Prefab("abigail_vex_hit", abigail_vex_hit_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")} )
+       Prefab("abigail_retaliation", retaliationattack_fn, {Asset("ANIM", "anim/abigail_shield.zip")} ),
+       Prefab("abigail_vex_debuff", abigail_vex_debuff_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")}, {"abigail_vex_hit"} ),
+       Prefab("abigail_vex_hit", abigail_vex_hit_fn, {Asset("ANIM", "anim/abigail_debuff_fx.zip")})
        

@@ -29,6 +29,7 @@ Assets = {
     Asset("ANIM", "anim/wendy_flower_over.zip"),
     Asset("ANIM", "anim/player_idles_wendy.zip"),
     Asset("ANIM", "anim/abigail_shield.zip"),
+    Asset("ANIM", "anim/abigail_debuff_fx.zip"),
 
     Asset("SOUND", "sound/wendy.fsb"),    
 }
@@ -79,24 +80,23 @@ SPEECH_WENDY.DESCRIBE.ABBY_FLOWER =
     LEVEL2 = "I can sense Abigail's spirit growing stronger.",
     LEVEL3 = "Abigail! Are you ready to play?",
 }
-SPEECH_WENDY.DESCRIBE.ABBY =
-{
+SPEECH_WENDY.DESCRIBE.ABBY = {
     GENERIC= "That's my twin sister, Abigail.",
     LEVEL1 =
-    {
+    -- {
         "It was so lonely without you here.",
-        "That's my twin sister, Abigail.",
-    },
+        -- "That's my twin sister, Abigail.",
+    -- },
     LEVEL2 = 
-    {
+    -- {
         "We'll never be apart again.",
-        "That's my twin sister, Abigail.",
-    },
+        -- "That's my twin sister, Abigail.",
+    -- },
     LEVEL3 = 
-    {
+    -- {
         "Let's play, Abigail!",
-        "That's my twin sister, Abigail.",
-    },
+        -- "That's my twin sister, Abigail.",
+    -- },
 }
 
 SPEECH_WENDY.COMMUNEWITHSUMMONED = {
@@ -227,7 +227,7 @@ local act_communewithsummoned = {
     priority=3,
     fn=communewithsummoned,
     -- str="Commune",
-    strfn=communestr,
+    str=communestr,
 }
 
 
