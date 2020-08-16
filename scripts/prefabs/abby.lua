@@ -73,6 +73,7 @@ local function IsWithinDefensiveRange(inst)
 end
 
 -- local COMBAT_MUSTHAVE_TAGS = { "combat", "health" }
+-- I needed to clear this for it to work and so far no problems ahahah
 local COMBAT_MUSTHAVE_TAGS = {}
 local COMBAT_CANTHAVE_TAGS = { "INLIMBO", "noauradamage" }
 

@@ -1,3 +1,5 @@
+require("sourcemodifierlist")
+
 local function setsummoned(self)
 	print("setsummoned")
 	if self.summoned then
@@ -48,7 +50,7 @@ local GhostlyBond = Class(function(self, inst)
 	self.bondtimemult = 4
 
 	-- this seems to be a DST only thing
-	-- self.externalbondtimemultipliers = SourceModifierList(self.inst)
+	self.externalbondtimemultipliers = SourceModifierList(self.inst)
 
 	inst:StartUpdatingComponent(self)
 end,
@@ -103,7 +105,7 @@ function GhostlyBond:OnUpdate(dt)
 		return
 	end
 
-	self.bondleveltimer = self.bondleveltimer + (dt * self.bondtimemult)
+	self.bondleveltimer = self.bondleveltimer + (dt * self.externalbondtimemultipliers:Get())
 	if self.bondleveltimer >= self.bondlevelmaxtime then
 		self:SetBondLevel(self.bondlevel + 1, self.bondleveltimer - self.bondlevelmaxtime)
 	end
@@ -224,6 +226,10 @@ function GhostlyBond:ChangeBehaviour()
 		return self.changebehaviourfn(self.inst, self.ghost)
 	end
 	return false
+end
+
+function GhostlyBond:GetDebugString()
+	return tostring(self.ghost)..", "..tostring(self.bondlevel)..(self.bondleveltimer ~= nil and (", "..string.format("%0.2f", self.bondlevelmaxtime - self.bondleveltimer)) or "max") .. ", mult: " .. string.format("%0.2f", self.inst.components.ghostlybond.externalbondtimemultipliers:Get()).. (self.paused and ", paused" or "")
 end
 
 return GhostlyBond

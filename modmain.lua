@@ -100,10 +100,13 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
     -- },
 }
 
-SPEECH_WENDY.COMMUNEWITHSUMMONED = {
-    MAKE_AGGRESSIVE = "Rile Up",
-    MAKE_DEFENSIVE = "Soothe",
-}
+SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
+SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
+
+-- SPEECH_WENDY.COMMUNEWITHSUMMONED = {
+--     MAKE_AGGRESSIVE = "Rile Up",
+--     MAKE_DEFENSIVE = "Soothe",
+-- }
 
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
@@ -196,7 +199,14 @@ local communewithsummoned = function(act)
 end
 
 local communestr = function(act)
-    return act.doer:HasTag("has_aggressive_follower") and "Soothe" or "Rile Up"
+    print("communestr")
+    if act.doer:HasTag("has_aggressive_follower") then
+        print("make defensive")
+        return "MAKE_DEFENSIVE"
+    else
+        print("make aggressive")
+        return "MAKE_AGGRESSIVE"
+    end
 end
 
 -- 
@@ -227,8 +237,8 @@ local act_communewithsummoned = {
     mount_enabledd=true,
     priority=3,
     fn=communewithsummoned,
+    strfn=communestr,
     str="Commune",
-    -- str=communestr,
 }
 
 
