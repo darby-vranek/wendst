@@ -22,7 +22,7 @@ local function ground_fn()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     inst.entity:AddLight()
-    inst.entity:AddNetwork()
+    -- inst.entity:AddNetwork()
 
     inst.AnimState:SetBank("abigail_attack_fx")
     inst.AnimState:SetBuild("abigail_attack_fx")

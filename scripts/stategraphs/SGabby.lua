@@ -27,10 +27,10 @@ local function startaura(inst)
     --     inst.attack_fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
     -- end
     
---   inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
---   inst:AddChild(inst.attack_fx_ground)
---   inst.attack_fx_ground.AnimState:PlayAnimation(attack_anim .. "_ground_pre")
---   inst.attack_fx_ground.AnimState:PushAnimation(attack_anim .. "_ground_loop", true)
+  inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
+  inst:AddChild(inst.attack_fx_ground)
+  inst.attack_fx_ground.AnimState:PlayAnimation(attack_anim .. "_ground_pre")
+  inst.attack_fx_ground.AnimState:PushAnimation(attack_anim .. "_ground_loop", true)
 end
 
 local function stopaura(inst)
@@ -59,12 +59,12 @@ local events =
             inst.sg:GoToState("hit")
         end
     end),
-    EventHandler("dance", function(inst)
-        if not (inst.sg:HasStateTag("dancing") or inst.sg:HasStateTag("busy") or 
-                inst.components.health:IsDead() or inst.sg:HasStateTag("dissipate")) then
-            inst.sg:GoToState("dance")
-        end
-    end),
+    -- EventHandler("dance", function(inst)
+    --     if not (inst.sg:HasStateTag("dancing") or inst.sg:HasStateTag("busy") or 
+    --             inst.components.health:IsDead() or inst.sg:HasStateTag("dissipate")) then
+    --         inst.sg:GoToState("dance")
+    --     end
+    -- end),
 }
 
 local states =
@@ -246,7 +246,7 @@ local states =
 				inst._playerlink.components.ghostlybond:RecallComplete()
 			end
 			if inst.components.health:IsDead() then
-				inst.components.health:SetCurrentHealth(1)
+				inst.components.health.currenthealth = 1
 			end
         end,
     },

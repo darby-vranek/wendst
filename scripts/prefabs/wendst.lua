@@ -35,14 +35,15 @@ local start_inv =
 
 
 local function OnBondLevelDirty(inst)
-    -- if inst.HUD ~= nil and not inst:HasTag("playerghost") then
-        local bond_level = inst._bondlevel:value()
+    print("OnBondLevelDirty")
+    if inst.HUD ~= nil and not inst:HasTag("playerghost") then
+        local bond_level = inst._bondlevel
         if bond_level > 1 then
             if inst.HUD.wendyflowerover ~= nil then
                 inst.HUD.wendyflowerover:Play( bond_level )
             end
         end
-    -- end
+    end
 end
 
 -- local function OnPlayerDeactivated(inst)
@@ -95,12 +96,15 @@ local function onresurrection(inst)
 end
 
 local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloading)
-    inst._bondlevel = level
+    print("ghostlybond_onlevelchange")
+    -- inst._bondlevel = level
 
-    if not isloading and inst.components.talker ~= nil and level > 1 then
-        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
-        OnBondLevelDirty(inst)
-    end
+    -- if inst.components.talker ~= nil and level > 1 then
+    --     print("talker")
+    --     inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
+    --     -- OnBondLevelDirty(inst)
+    -- end
+    print("return to ghostlybond")
 end
 
 local function ghostlybond_onsummon(inst, ghost)
@@ -113,6 +117,7 @@ local function ghostlybond_onsummon(inst, ghost)
 end
 
 local function ghostlybond_onrecall(inst, ghost, was_killed)
+    print("ghostlybond_onrecall")
     if inst.components.sanity ~= nil then
         inst.components.sanity:DoDelta(was_killed and (-TUNING.SANITY_MED * 2) or -TUNING.SANITY_MED)
     end
@@ -146,7 +151,9 @@ end
 -- end
 
 local function CustomCombatDamage(inst, target)
-    return 1
+    return (target.components.debuffable ~= nil and target.components.debuffable:HasDebuff("abigail_vex_debuff")) and TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD 
+        or (target == inst.components.ghostlybond.ghost and target:HasTag("abby")) and 0
+        or 1
 end
 
 -------------------------------------------------------------------------------
@@ -196,7 +203,7 @@ local function fn(inst)
     inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
     inst.components.ghostlybond:Init("abby", TUNING.ABIGAIL_BOND_LEVELUP_TIME)
 
-    -- inst.components.combat.customdamagemultfn = CustomCombatDamage
+    inst.components.combat.customdamagemultfn = CustomCombatDamage
 
     -- inst:AddTag("elixirbrewer")
 
@@ -210,7 +217,7 @@ local function fn(inst)
     inst.AnimState:AddOverrideBuild("wendy_channel")
 
     -- inst._bondlevel = net_tinybyte(inst.GUID, "wendy._bondlevel", "_bondleveldirty")
-    inst._bondlevel = inst.components.ghostlybond.bond_level
+    inst._bondlevel = inst.components.ghostlybond.bondlevel
 
     inst.OnDespawn = OnDespawn
 
