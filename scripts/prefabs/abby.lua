@@ -1,17 +1,6 @@
 
 require "stategraphs/SGabby"
 
--- local assets =
--- {
--- 	Asset("ANIM", "anim/ghost.zip"),
--- 	Asset("ANIM", "anim/ghost_wendy_build.zip"),
--- 	Asset("SOUND", "sound/ghost.fsb"),
--- }
-
--- local prefabs = 
--- {
--- }
-
 local assets =
 {
     Asset("ANIM", "anim/player_ghost_withhat.zip"),
@@ -48,6 +37,7 @@ local function UpdateGhostlyBondLevel(inst, level)
             health_comp:SetPercent(health_percent, true)
         end
 
+        -- this should go in once i get that component in place
         -- if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil then
         --     inst._playerlink.components.pethealthbar:SetMaxHealth(max_health)
         -- end
@@ -88,13 +78,13 @@ local function HasFriendlyLeader(inst, target)
         local target_leader = (target.components.follower ~= nil) and target.components.follower.leader or nil
 
         if target_leader and target_leader.components.inventoryitem then
-            target_leader = target_leader.components.inventoryitem.owner
+            target_leader = target_leader.components.inventoryitem.GetGrandOwner()
             -- Don't attack followers if their follow object has no owner
             if target_leader == nil then
                 return true
             end
         end
-        -- local PVP_enabled = TheNet:GetPVPEnabled()
+
         -- return leader == target or (target_leader ~= nil 
         --         and (target_leader == leader or (target_leader:HasTag("player") 
         --         and not PVP_enabled))) or
@@ -171,21 +161,13 @@ end
 -- this is gonna cause me some issues without the ectoherbology stuff in place - I shouldn't run this
 local function StartForceField(inst)
     if not inst.sg:HasStateTag("dissipate") and (inst.components.health == nil or not inst.components.health:IsDead()) then
-        -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+        local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+        -- commented out as I do not have elixirs in place
         -- inst.components.debuffable:AddDebuff("forcefield", elixir_buff ~= nil and elixir_buff.potion_tunings.shield_prefab or "abigailforcefield")
+        inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
         print("would use forcefield here if debuff existed")
     end
 end
-
-
-
-
-
-
-
-
-
-
 
 
 local function Retarget(inst)
@@ -214,7 +196,7 @@ local function OnAttacked(inst, data)
 
 
     -- commenting this out as I don't have ectoherbology set up
-    -- if inst.components.debuffable:HasDebuff("forcefield") then
+    if inst.components.debuffable:HasDebuff("forcefield") then
         if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
     --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
     --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
@@ -225,48 +207,10 @@ local function OnAttacked(inst, data)
     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
         end
     --     end
-    -- end
+    end
 
-    -- StartForceField(inst)
+    StartForceField(inst)
 end
-
--- local function OnAttacked(inst, data)
---     --print(inst, "OnAttacked")
---     local attacker = data.attacker
-
---     if attacker and attacker:HasTag("player") then
---         inst.components.health:SetVal(0)
---     else
---         inst.components.combat:SetTarget(attacker)
---     end
--- end
-
--- local function OnAttacked(inst, data)
---     if data.attacker == nil then
---         inst.components.combat:SetTarget(nil)
---     elseif not data.attacker:HasTag("noauradamage") then
---         if not inst.is_defensive then
---             inst.components.combat:SetTarget(data.attacker)
---         elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
---             -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
---             inst.components.combat:SetTarget(data.attacker)
---         end
---     end
-
---     -- if inst.components.debuffable:HasDebuff("forcefield") then
---     if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
---         -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
---         -- if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
---             local retaliation = SpawnPrefab("abigail_retaliation")
---             retaliation:SetRetaliationTarget(data.attacker)
---             -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
---         -- else
---             -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
---         -- end
---     end
-
---     -- StartForceField(inst)
--- end
 
 local function OnBlocked(inst, data)
     if data ~= nil and inst._playerlink ~= nil and data.attacker == inst._playerlink then
@@ -279,7 +223,7 @@ end
 local function OnDeath(inst)
     inst.components.aura:Enable(false)
     -- inst.components.debuffable:RemoveDebuff("ghostlyelixir")
-    -- inst.components.debuffable:RemoveDebuff("forcefield")
+    inst.components.debuffable:RemoveDebuff("forcefield")
 end
 
 local function OnRemoved(inst)
@@ -291,11 +235,6 @@ local function auratest(inst, target)
         return false
     end
 
-    -- if target.components.minigame_participator ~= nil then
-    --     return false
-    -- end
-
-    -- changed this up
     if target:HasTag("player") or target:HasTag("ghost") or target:HasTag("noauradamage") then
         return false
     end
@@ -362,7 +301,7 @@ local function DoAppear(sg)
     sg:GoToState("appear")
 end
 
--- commenting this one out for now
+-- commenting this one out for now as it's for that pet ui
 -- local function OnDebuffAdded(inst, name, debuff)
 --     if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil and name == "elixir_buff" then
 --         inst._playerlink.components.pethealthbar:SetSymbol(debuff.prefab)
@@ -401,17 +340,17 @@ end
 -- commenting out
 local function ApplyDebuff(inst, data)
     local target = data ~= nil and data.target
-    -- if target ~= nil then
-    --     if target.components.debuffable == nil then
-    --         target:AddComponent("debuffable")
-    --     end
-    --     -- local debuff = target.components.debuffable:AddDebuff("abigail_vex_debuff", "abigail_vex_debuff")
+    if target ~= nil then
+        if target.components.debuffable == nil then
+            target:AddComponent("debuffable")
+        end
+        local debuff = target.components.debuffable:AddDebuff("abigail_vex_debuff", "abigail_vex_debuff")
 
-    --     -- local skin_build = inst:GetSkinBuild()
-    --     -- if skin_build ~= nil and debuff ~= nil then
-    --     --     debuff.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
-    --     -- end
-    -- end
+        -- local skin_build = inst:GetSkinBuild()
+        -- if  debuff ~= nil then
+        --     debuff.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
+        -- end
+    end
 end
 
 local function linktoplayer(inst, player)
@@ -455,52 +394,6 @@ local function getstatus(inst)
         or "LEVEL1"
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- local function auratest(inst, target)
-
---     if target == GetPlayer() then return false end
-
---     local leader = inst.components.follower.leader
---     if target.components.combat.target and ( target.components.combat.target == inst or target.components.combat.target == leader) then return true end
---     if inst.components.combat.target == target then return true end
-
---     if leader then
---         if leader == target then return false end
---         if target.components.follower and target.components.follower.leader == leader then return false end
---     end
-
---     return (target:HasTag("monster") or target:HasTag("prey")) and inst.components.combat:CanTarget(target)
--- end
-
--- local function updatedamage(inst)
---     if GetClock():IsDay() then
---         inst.components.combat.defaultdamage = .5*TUNING.ABIGAIL_DAMAGE_PER_SECOND 
---     elseif GetClock():IsNight() then
---         inst.components.combat.defaultdamage = 2*TUNING.ABIGAIL_DAMAGE_PER_SECOND     
---     elseif GetClock():IsDusk() then
---         inst.components.combat.defaultdamage = TUNING.ABIGAIL_DAMAGE_PER_SECOND 
---     end
--- end
-
-
-   
 
 
 -- local function fn(Sim)
@@ -708,7 +601,7 @@ local function fn(Sim)
     inst:ListenForEvent( "nighttime", function() inst:UpdateDamage() end , GetWorld())
     inst:UpdateDamage()
 
-    inst:UpdateDamage()
+    -- inst:UpdateDamage()
 
     
 
@@ -810,13 +703,13 @@ local function buff_OnExtended(inst)
     if inst.decaytimer ~= nil then
         inst.decaytimer:Cancel()
     end
-    -- inst.decaytimer = inst:DoTaskInTime(TUNING.ABIGAIL_VEX_DURATION, function() inst.components.debuff:Stop() end)
+    inst.decaytimer = inst:DoTaskInTime(TUNING.ABIGAIL_VEX_DURATION, function() inst.components.debuff:Stop() end)
 end
 
 local function buff_OnAttached(inst, target)
     if target ~= nil and target:IsValid() and not target.inlimbo and target.components.combat ~= nil and target.components.health ~= nil and not target.components.health:IsDead() then
         -- no idea what to do with that I don't get how the damage mult stuff works in DST
-        -- target.components.combat.externaldamagetakenmultipliers:SetModifier(inst, TUNING.ABIGAIL_VEX_DAMAGE_MOD)
+        target.components.combat.externaldamagetakenmultipliers:SetModifier(inst, TUNING.ABIGAIL_VEX_DAMAGE_MOD)
 
         inst.entity:SetParent(target.entity)
         inst.Transform:SetPosition(0, 0, 0)
@@ -828,9 +721,9 @@ local function buff_OnAttached(inst, target)
         inst:ListenForEvent("attacked", inst._on_target_attacked, target)
     end
 
-    -- buff_OnExtended(inst)
+    buff_OnExtended(inst)
 
-    -- inst:ListenForEvent("death", function() inst.components.debuff:Stop() end, target)
+    inst:ListenForEvent("death", function() inst.components.debuff:Stop() end, target)
 end
 
 local function buff_OnDetached(inst, target)
@@ -838,9 +731,9 @@ local function buff_OnDetached(inst, target)
         inst.decaytimer:Cancel()
         inst.decaytimer = nil
 
-        -- if target ~= nil and target:IsValid() and target.components.combat ~= nil then
-        --     target.components.combat.externaldamagetakenmultipliers:RemoveModifier(inst)
-        -- end
+        if target ~= nil and target:IsValid() and target.components.combat ~= nil then
+            target.components.combat.externaldamagetakenmultipliers:RemoveModifier(inst)
+        end
 
         inst.AnimState:PushAnimation("vex_debuff_pst", false)
         inst:ListenForEvent("animqueueover", inst.Remove)
@@ -880,10 +773,10 @@ local function abigail_vex_debuff_fn()
     inst._on_target_attacked = function(target, data) on_target_attacked(inst, target, data) end
 
     -- apparently this component doesn't freaking exist in DS. I'll get to that next.
-    -- inst:AddComponent("debuff")
-    -- inst.components.debuff:SetAttachedFn(buff_OnAttached)
-    -- inst.components.debuff:SetDetachedFn(buff_OnDetached)
-    -- inst.components.debuff:SetExtendedFn(buff_OnExtended)
+    inst:AddComponent("debuff")
+    inst.components.debuff:SetAttachedFn(buff_OnAttached)
+    inst.components.debuff:SetDetachedFn(buff_OnDetached)
+    inst.components.debuff:SetExtendedFn(buff_OnExtended)
 
     return inst
 end

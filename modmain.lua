@@ -41,6 +41,8 @@ local TUNING = GLOBAL.TUNING
 local STRINGS = GLOBAL.STRINGS
 local SPEECH_WENDY = STRINGS.CHARACTERS.WENDY
 
+local SourceModifierList = require("sourcemodifierlist")
+
 -- require("stategraphs/SGwendst")
 
 
@@ -246,6 +248,12 @@ local act_communewithsummoned = {
 AddAction(act_castsummon)
 AddAction(act_castunsummon)
 AddAction(act_communewithsummoned)
+AddComponentPostInit("combat",
+    function(self, inst)
+        self.externaldamagemultipliers = SourceModifierList(self.inst)
+        self.externaldamagetakenmultipliers = SourceModifierList(self.inst)
+    end
+    )
 
 -- require("stategraphs/SGwendst")
 
