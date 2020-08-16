@@ -35,14 +35,14 @@ local start_inv =
 
 
 local function OnBondLevelDirty(inst)
-    if inst.HUD ~= nil and not inst:HasTag("playerghost") then
+    -- if inst.HUD ~= nil and not inst:HasTag("playerghost") then
         local bond_level = inst._bondlevel:value()
         if bond_level > 1 then
             if inst.HUD.wendyflowerover ~= nil then
                 inst.HUD.wendyflowerover:Play( bond_level )
             end
         end
-    end
+    -- end
 end
 
 -- local function OnPlayerDeactivated(inst)
@@ -95,7 +95,7 @@ local function onresurrection(inst)
 end
 
 local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloading)
-    inst._bondlevel:set(level)
+    inst._bondlevel = level
 
     if not isloading and inst.components.talker ~= nil and level > 1 then
         inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
@@ -146,9 +146,7 @@ end
 -- end
 
 local function CustomCombatDamage(inst, target)
-    return (target.components.debuffable ~= nil and target.components.debuffable:HasDebuff("abigail_vex_debuff")) and TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD 
-        or (target == inst.components.ghostlybond.ghost and target:HasTag("abby")) and 0
-        or 1
+    return 1
 end
 
 -------------------------------------------------------------------------------

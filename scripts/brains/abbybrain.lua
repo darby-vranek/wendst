@@ -76,22 +76,25 @@ end
 --         Wander(self.inst, function() return Point(GetPlayer().Transform:GetWorldPosition()) end , MAX_WANDER_DIST)        
 --     }, .5)
         
---     self.bt = BT(self.inst, root)
+--     self.bt = BT(self.i  nst, root)
          
 -- end
 
 function AbbyBrain:OnStart()
     local defensive_mode = WhileNode(function() return self.inst.is_defensive end, "DefensiveMove", 
-        PriorityNode({
-            WhileNode(function() return DefensiveCanFight(self.inst) end, "CanFight",
-                ChaseAndAttack(self.inst, TUNING.DEFENSIVE_MAX_CHASE_TIME)),
-            
-            -- FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
-            Follow(self.inst, function() return self.inst.components.follower.leader end, 
-                    TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW, TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW, TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW, true),
-            Wander(self.inst, function() return Point(GetPlayer().Transform:GetWorldPosition()) end , MAX_WANDER_DIST, WANDER_TIMING),
-        }, .25)
-    )
+    PriorityNode({
+        -- dance,
+        -- watch_game,
+        
+        WhileNode(function() return DefensiveCanFight(self.inst) end, "CanFight",
+            ChaseAndAttack(self.inst, TUNING.DEfFENSIVE_MAX_CHASE_TIME)),
+        
+        Follow(self.inst, function() return self.inst.components.follower.leader end, 
+                TUNING.ABIGAIL_DEFENSIVE_MIN_FOLLOW, TUNING.ABIGAIL_DEFENSIVE_MED_FOLLOW, TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW, true),
+        -- FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
+        Wander(self.inst, nil, nil, WANDER_TIMING),
+    }, .25)
+)
 
 
     local aggressive_mode = PriorityNode({
@@ -101,6 +104,7 @@ function AbbyBrain:OnStart()
         -- FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
         Follow(self.inst, function() return self.inst.components.follower.leader end,
                 TUNING.ABIGAIL_AGGRESSIVE_MIN_FOLLOW, TUNING.ABIGAIL_AGGRESSIVE_MED_FOLLOW, TUNING.ABIGAIL_AGGRESSIVE_MAX_FOLLOW, true),
+        -- FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
         Wander(self.inst),
     }, .25)
 

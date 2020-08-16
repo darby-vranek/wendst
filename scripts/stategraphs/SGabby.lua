@@ -327,7 +327,7 @@ local states =
 
         timeline = 
         {
-            TimeEvent(1 * FRAMES, function(inst)if math.random() < 0.8 then inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/howl") end end),
+            TimeEvent(1 * FRAMES, function(inst)if math.random() < 0.8 then inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_howl_LP", "howl") end end),
         },  
 
         ontimeout = function(inst)
@@ -393,7 +393,7 @@ local states =
 
         timeline = 
         {
-            TimeEvent(1 * FRAMES, function(inst) if math.random() < 0.8 then inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/howl") end end),
+            TimeEvent(1 * FRAMES, function(inst) if math.random() < 0.8 then inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_howl_LP", "howl") end end),
         },  
 
         ontimeout = function(inst)

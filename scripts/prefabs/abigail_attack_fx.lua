@@ -35,7 +35,7 @@ local function ground_fn()
     --     return inst
     -- end
 
-    -- inst.persits = false
+    inst.persits = false
     inst.kill_fx = ground_kill_fx
 
     return inst
@@ -57,7 +57,7 @@ local function normal_fn()
     --     return inst
     -- end
 
-    -- inst.persits = false
+    inst.persits = false
     inst.kill_fx = normal_kill_fx
 
     return inst

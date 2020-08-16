@@ -72,7 +72,8 @@ local function IsWithinDefensiveRange(inst)
     return inst._playerlink and inst:GetDistanceSqToInst(inst._playerlink) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ
 end
 
-local COMBAT_MUSHAVE_TAGS = { "combat", "health" }
+-- local COMBAT_MUSTHAVE_TAGS = { "combat", "health" }
+local COMBAT_MUSTHAVE_TAGS = {}
 local COMBAT_CANTHAVE_TAGS = { "INLIMBO", "noauradamage" }
 
 local COMBAT_MUSTONEOF_TAGS_AGGRESSIVE = { "monster", "prey", "insect", "hostile", "character", "animal" }
@@ -124,7 +125,7 @@ local function DefensiveRetarget(inst)
         local ix, iy, iz = inst.Transform:GetWorldPosition()
         local entities_near_me = TheSim:FindEntities(
             ix, iy, iz, TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW,
-            COMBAT_MUSHAVE_TAGS, COMBAT_CANTHAVE_TAGS, COMBAT_MUSTONEOF_TAGS_DEFENSIVE
+            COMBAT_MUSTHAVE_TAGS, COMBAT_CANTHAVE_TAGS, COMBAT_MUSTONEOF_TAGS_DEFENSIVE
         )
 
         local leader = inst.components.follower.leader
@@ -150,8 +151,9 @@ local function AggressiveRetarget(inst)
         local ix, iy, iz = inst.Transform:GetWorldPosition()
         local entities_near_me = TheSim:FindEntities(
             ix, iy, iz, TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE,
-            COMBAT_MUSHAVE_TAGS, COMBAT_CANTHAVE_TAGS, COMBAT_MUSTONEOF_TAGS_AGGRESSIVE
+            COMBAT_MUSTHAVE_TAGS, COMBAT_CANTHAVE_TAGS, COMBAT_MUSTONEOF_TAGS_AGGRESSIVE
         )
+        print(#entities_near_me)
 
         local leader = inst.components.follower.leader
 
@@ -186,6 +188,7 @@ end
 
 
 local function Retarget(inst)
+    print("local function Retarget(inst)")
 
     local newtarget = FindEntity(inst, 20, function(guy)
             return  guy.components.combat and 
@@ -211,15 +214,15 @@ local function OnAttacked(inst, data)
 
     -- commenting this out as I don't have ectoherbology set up
     -- if inst.components.debuffable:HasDebuff("forcefield") then
-    --     if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
+        if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
     --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
     --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
-                local retaliation = SpawnPrefab("abigail_retaliation")
-                retaliation:SetRetaliationTarget(data.attacker)
+            local retaliation = SpawnPrefab("abigail_retaliation")
+            retaliation:SetRetaliationTarget(data.attacker)
     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
     --         else
     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
-    --         end
+        end
     --     end
     -- end
 
@@ -237,32 +240,32 @@ end
 --     end
 -- end
 
-local function OnAttacked(inst, data)
-    if data.attacker == nil then
-        inst.components.combat:SetTarget(nil)
-    elseif not data.attacker:HasTag("noauradamage") then
-        if not inst.is_defensive then
-            inst.components.combat:SetTarget(data.attacker)
-        elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
-            -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
-            inst.components.combat:SetTarget(data.attacker)
-        end
-    end
+-- local function OnAttacked(inst, data)
+--     if data.attacker == nil then
+--         inst.components.combat:SetTarget(nil)
+--     elseif not data.attacker:HasTag("noauradamage") then
+--         if not inst.is_defensive then
+--             inst.components.combat:SetTarget(data.attacker)
+--         elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
+--             -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
+--             inst.components.combat:SetTarget(data.attacker)
+--         end
+--     end
 
-    -- if inst.components.debuffable:HasDebuff("forcefield") then
-    if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
-        -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
-        -- if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
-            local retaliation = SpawnPrefab("abigail_retaliation")
-            retaliation:SetRetaliationTarget(data.attacker)
-            -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
-        -- else
-            -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
-        -- end
-    end
+--     -- if inst.components.debuffable:HasDebuff("forcefield") then
+--     if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
+--         -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+--         -- if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
+--             local retaliation = SpawnPrefab("abigail_retaliation")
+--             retaliation:SetRetaliationTarget(data.attacker)
+--             -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+--         -- else
+--             -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+--         -- end
+--     end
 
-    -- StartForceField(inst)
-end
+--     -- StartForceField(inst)
+-- end
 
 local function OnBlocked(inst, data)
     if data ~= nil and inst._playerlink ~= nil and data.attacker == inst._playerlink then
@@ -739,8 +742,8 @@ end
 
 local function DoRetaliationDamage(inst)
     print("local function DoRetaliationDamage(inst)")
-    print(target)
     local target = inst._RetaliationTarget
+    print(target)
     if target ~= nil and target:IsValid() and not target.inlimbo and target.components.combat ~= nil then
         target.components.combat:GetAttacked(inst, TUNING.GHOSTLYELIXIR_RETALIATION_DAMAGE)
         inst:detachretaliationattack(target)
@@ -756,14 +759,14 @@ local function retaliationattack_fn()
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
-    inst.entity:AddNetwork()
+    -- inst.entity:AddNetwork()
 
     inst.AnimState:SetBank("abigail_shield")
     inst.AnimState:SetBuild("abigail_shield")
     inst.AnimState:PlayAnimation("retaliation_fx")
     -- don't super know what this is? going with the original version
-    -- inst.AnimState:SetBloomEffectHandle("shaders/anim_bloom_ghost.ksh")
-    anim:SetBloomEffectHandle( "shaders/anim.ksh" )
+    inst.AnimState:SetBloomEffectHandle("shaders/anim.ksh")
+    -- anim:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.AnimState:SetLightOverride(.1)
     inst.AnimState:SetFinalOffset(3)
 
@@ -872,7 +875,7 @@ local function abigail_vex_debuff_fn()
     --     return inst
     -- end
 
-    -- inst.persists = false
+    inst.persists = false
     inst._on_target_attacked = function(target, data) on_target_attacked(inst, target, data) end
 
     -- apparently this component doesn't freaking exist in DS. I'll get to that next.
