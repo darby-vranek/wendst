@@ -1,11 +1,13 @@
 local MakePlayerCharacter = require("prefabs/player_common")
 local WendyFlowerOver = require("widgets/wendyflowerover")
 
+-- require "stategraphs/SGwendst"
+
 local assets =
 {
     Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
     Asset("SOUND", "sound/wendy.fsb"),
-
+    -- Asset("ANIM", "anim/wendy.zip"),
     Asset("ANIM", "anim/wendy_channel.zip"),
     -- Asset("ANIM", "anim/wendy_mount_channel.zip"),
     Asset("ANIM", "anim/wendy_recall.zip"),
@@ -186,12 +188,16 @@ end
 local function fn(inst)
     print("WENDST INIT")
     inst.soundsname = "wendy"
+    
     inst.MiniMapEntity:SetIcon("wendst.tex")
+    inst:SetStateGraph("SGwilson")
     inst.AnimState:SetBuild("wendy")
     
     inst.components.sanity.night_drain_mult = TUNING.WENDY_SANITY_MULT
     inst.components.sanity.neg_aura_mult = TUNING.WENDY_SANITY_MULT
     inst.components.combat.damagemultiplier = TUNING.WENDY_DAMAGE_MULT
+
+
 
     inst:AddTag("ghostlyfriend")
 

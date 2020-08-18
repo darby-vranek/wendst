@@ -25,7 +25,7 @@ Assets = {
 	Asset( "IMAGE", "minimap/wendst.tex" ),
 	Asset( "ATLAS", "minimap/wendst.xml" ),
 
-    Asset("ANIM", "anim/wendy_channel.zip"),
+    -- Asset("ANIM", "anim/wendst.zip"),
     Asset("ANIM", "anim/wendy_recall.zip"),
     Asset("ANIM", "anim/player_wendy_commune.zip"),
     Asset("ANIM", "anim/wendy_flower_over.zip"),
@@ -40,7 +40,9 @@ Assets = {
 local require = GLOBAL.require
 local TUNING = GLOBAL.TUNING
 local STRINGS = GLOBAL.STRINGS
+local ACTIONS = GLOBAL.ACTIONS
 local SPEECH_WENDY = STRINGS.CHARACTERS.WENDY
+
 
 local SourceModifierList = require("sourcemodifierlist")
 
@@ -59,6 +61,24 @@ table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
 STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
 STRINGS.NAMES.ABBY = "Abigail"
+
+
+
+-- STRINGS.ACTIONS.COMMUNEWITHSUMMONED = 
+-- STRINGS.ACTIONS.COMMUNEWITHSUMMONED.id = "COMMUNEWITHSUMMONED"
+local COMMUNEWITHSUMMONED = 
+{
+    id="COMMUNEWITHSUMMONED",
+    GENERIC = "Commune",
+    MAKE_AGGRESSIVE = "Rile Up",
+    MAKE_DEFENSIVE = "Soothe",
+}
+
+table.insert(STRINGS.ACTIONS, COMMUNEWITHSUMMONED)
+
+-- ACTIONS.COMMUNEWITHSUMMONED = {id="COMMUNEWITHSUMMONED", GENERIC="COMMUNE", MAKE_AGGRESSIVE="Rile Up", MAKE_DEFENSIVE="Soothe"}
+
+
 
 -- dialogue
 
@@ -105,11 +125,6 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
 
 -- SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
 -- SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
-
-SPEECH_WENDY.COMMUNEWITHSUMMONED = {
-    MAKE_AGGRESSIVE = "Rile Up",
-    MAKE_DEFENSIVE = "Soothe",
-}
 
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
@@ -176,7 +191,14 @@ TUNING.GHOSTLYELIXIR_RETALIATION_DAMAGE = 20
 TUNING.GHOSTLYELIXIR_RETALIATION_DURATION = total_day_time
 TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY = seg_time / 2
 
+
 -- actions
+local State = GLOBAL.State
+local TimeEvent = GLOBAL.TimeEvent
+local EventHandler = GLOBAL.EventHandler
+local ActionHandler = GLOBAL.ActionHandler
+local FRAMES = GLOBAL.FRAMES
+
 
 local castsummon = function(act)
     -- print('castsummon')
@@ -201,18 +223,22 @@ local communewithsummoned = function(act)
     end
 end
 
-local communewithsummonedstrfn = function(act)
+local communestr = function(act)
     print("communestr")
     if act.doer:HasTag("has_aggressive_follower") then
-        print("make defensive")
-        return "MAKE_DEFENSIVE"
+        print("make defensive")    
     else
         print("make aggressive")
-        return "MAKE_AGGRESSIVE"
     end
+    ACTIONS.COMMUNEWITHSUMMONED.str = act.doer:HasTag("has_aggressive_follower") and "MAKE_DEFENSIVE" or "MAKE_AGGRESSIVE"
+    return act.doer:HasTag("has_aggressive_follower") and "MAKE_DEFENSIVE" or "MAKE_AGGRESSIVE"
 end
 
--- 
+---
+
+
+---
+
 
 
 local act_castsummon = {
@@ -240,15 +266,166 @@ local act_communewithsummoned = {
     mount_enabledd=true,
     priority=3,
     fn=communewithsummoned,
-    strfn=communewithsummonedstrfn,
     str="Commune",
+    strfn=communestr,
+
 }
+
 
 
 
 AddAction(act_castsummon)
 AddAction(act_castunsummon)
 AddAction(act_communewithsummoned)
+
+
+
+local summonstate = State {
+    name = "summon_abigail",
+    tags = { "doing", "busy", "nodangle", "canrotate" },
+
+    onenter = function(inst)
+        inst.components.locomotor:Stop()
+        inst.AnimState:PlayAnimation("wendy_channel")
+        inst.AnimState:PushAnimation("wendy_channel_pst", false)
+
+        if inst.bufferedaction ~= nil then
+            local flower = inst.bufferedaction.invobject
+            if flower ~= nil then
+                local skin_build = flower:GetSkinBuild()
+                if skin_build ~= nil then
+                    inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                else
+                    inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+                end
+            end
+
+            inst.sg.statemem.action = inst.bufferedaction
+        end
+    end,
+
+    timeline =
+    {
+        TimeEvent(0 * FRAMES, function(inst)
+            if inst.components.talker ~= nil and inst.components.ghostlybond ~= nil then
+                inst.components.talker:Say(GetString("wendy", "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL"..inst.components.ghostlybond.bondlevel))
+            end
+        end),
+        
+        TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
+        TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon") end),
+
+        TimeEvent(52 * FRAMES, function(inst) 
+            inst.sg.statemem.fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailsummonfx_mount" or "abigailsummonfx")
+            inst.sg.statemem.fx.entity:SetParent(inst.entity)
+            inst.sg.statemem.fx.Transform:SetRotation(inst.Transform:GetRotation())
+            inst.sg.statemem.fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
+            
+            if inst.bufferedaction ~= nil then
+                local flower = inst.bufferedaction.invobject
+                if flower ~= nil then
+                    local skin_build = flower:GetSkinBuild()
+                    if skin_build ~= nil then
+                        inst.sg.statemem.fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                    end
+                end
+            end
+
+            if inst.components.talker ~= nil then
+                inst.components.talker:ShutUp()
+            end
+        end),
+        TimeEvent(62 * FRAMES, function(inst) 
+            if inst:PerformBufferedAction() then
+                inst.sg.statemem.fx = nil
+            else
+                inst.sg:GoToState("idle")
+            end
+        end),
+        TimeEvent(74 * FRAMES, function(inst) inst.sg:RemoveStateTag("busy") end),
+    },
+
+    events =
+    {
+        EventHandler("animqueueover", function(inst)
+            if inst.AnimState:AnimDone() then
+                inst.sg:GoToState("idle")
+            end
+        end),
+    },
+
+    onexit = function(inst)
+        inst.AnimState:ClearOverrideSymbol("flower")
+        if inst.sg.statemem.fx ~= nil then
+            inst.sg.statemem.fx:Remove()
+        end
+        if inst.bufferedaction == inst.sg.statemem.action then
+            inst:ClearBufferedAction()
+        end
+    end,
+}
+
+local communestate = State
+{
+    name = "commune_with_abigail",
+    tags = { "doing", "busy", "nodangle" },
+
+    onenter = function(inst)
+        inst.components.locomotor:Stop()
+        inst.AnimState:PlayAnimation("wendy_commune_pre")
+        inst.AnimState:PushAnimation("wendy_commune_pst", false)
+
+        if inst.bufferedaction ~= nil then
+            local flower = inst.bufferedaction.invobject
+            if flower ~= nil then
+                local skin_build = flower:GetSkinBuild()
+                if skin_build ~= nil then
+                    inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                else
+                    inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+                end
+            end
+
+            inst.sg.statemem.action = inst.bufferedaction
+
+        end
+    end,
+
+    timeline =
+    {
+        TimeEvent(14 * FRAMES, function(inst) 
+            inst:PerformBufferedAction()
+        end),
+
+        TimeEvent(35 * FRAMES, function(inst) 
+            inst.sg:RemoveStateTag("busy")
+        end),
+    },
+
+    events =
+    {
+        EventHandler("animqueueover", function(inst)
+            if inst.AnimState:AnimDone() then
+                inst.sg:GoToState("idle")
+            end
+        end),
+    },
+
+    onexit = function(inst)
+        inst.AnimState:ClearOverrideSymbol("flower")
+        if inst.bufferedaction == inst.sg.statemem.action then
+            inst:ClearBufferedAction()
+        end
+    end,
+}
+
+AddStategraphState("wilson", communestate)
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.COMMUNEWITHSUMMONED,
+        function(inst, action)
+            print("commune")
+            return action.invobject ~= nil and action.invobject:HasTag("abigail_flower") and "commune_with_abigail" or "dolongaction"
+        end))
+
 AddComponentPostInit("combat",
     function(self, inst)
         self.externaldamagemultipliers = SourceModifierList(self.inst)
@@ -260,20 +437,6 @@ AddComponentPostInit("health",
         self.externalabsorbmodifiers = SourceModifierList(inst, 0, SourceModifierList.additive)
 
     end)
--- AddComponentPostInit("health",
---     function(self, inst)
---         self.SetCurrentHealth = function(amount)
---             self.currenthealth = amount
---         end
---     end)
-
-
--- require("stategraphs/SGwendst")
-
--- AddStategraphActionHandler("wilson", act_castsummon)
--- AddStategraphActionHandler("wilson", actionhandler)
--- AddStategraphActionHandler("wilson", actionhandler)
-
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")
