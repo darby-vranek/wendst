@@ -5,7 +5,6 @@ PrefabFiles = {
     "abby_flower",
     "abby",
     'abigail_attack_fx',
-    "abigailforcefield",
 }
 
 
@@ -123,9 +122,8 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
     -- },
 }
 
--- SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
--- SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
-
+SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
+SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
 local seg_time = TUNING.SEG_TIME
@@ -266,6 +264,10 @@ local act_communewithsummoned = {
     mount_enabledd=true,
     priority=3,
     fn=communewithsummoned,
+<<<<<<< HEAD
+=======
+    strfn=communestr,
+>>>>>>> parent of 7256193... ghost can now die
     str="Commune",
     strfn=communestr,
 
@@ -432,11 +434,21 @@ AddComponentPostInit("combat",
         self.externaldamagetakenmultipliers = SourceModifierList(self.inst)
     end
     )
+<<<<<<< HEAD
 AddComponentPostInit("health",
     function(self, inst)
         self.externalabsorbmodifiers = SourceModifierList(inst, 0, SourceModifierList.additive)
 
     end)
+=======
+
+-- require("stategraphs/SGwendst")
+
+-- AddStategraphActionHandler("wilson", act_castsummon)
+-- AddStategraphActionHandler("wilson", actionhandler)
+-- AddStategraphActionHandler("wilson", actionhandler)
+
+>>>>>>> parent of 7256193... ghost can now die
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")

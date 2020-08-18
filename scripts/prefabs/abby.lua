@@ -144,7 +144,7 @@ local function AggressiveRetarget(inst)
             ix, iy, iz, TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE,
             COMBAT_MUSTHAVE_TAGS, COMBAT_CANTHAVE_TAGS, COMBAT_MUSTONEOF_TAGS_AGGRESSIVE
         )
-        -- print(#entities_near_me)
+        print(#entities_near_me)
 
         local leader = inst.components.follower.leader
 
@@ -165,7 +165,7 @@ local function StartForceField(inst)
         -- commented out as I do not have elixirs in place
         -- inst.components.debuffable:AddDebuff("forcefield", elixir_buff ~= nil and elixir_buff.potion_tunings.shield_prefab or "abigailforcefield")
         inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
-        -- print("would use forcefield here if debuff existed")
+        print("would use forcefield here if debuff existed")
     end
 end
 
@@ -316,7 +316,6 @@ end
 -- end
 
 local function on_ghostlybond_level_change(inst, player, data)
-    print("abby - on_ghostlybond_level_change")
     if not inst.inlimbo and data.level > 1 and not inst.sg:HasStateTag("busy") and (inst.components.health == nil or not inst.components.health:IsDead()) then
         inst.sg:GoToState("ghostlybond_levelup", {level = data.level})
     end
@@ -376,7 +375,7 @@ local function linktoplayer(inst, player)
     -- end
 
     UpdateGhostlyBondLevel(inst, player.components.ghostlybond.bondlevel)
-    inst:ListenForEvent("ghostlybond_level_change", inst.on_ghostlybond_level_change, player)
+    inst:ListenForEvent("ghostlybond_level_change", inst._on_ghostlybond_level_change, player)
     inst:ListenForEvent("onremove", inst._onlostplayerlink, player)
 
     player.components.sanity:DoDelta(TUNING.SANITY_MED)
