@@ -6,6 +6,7 @@ PrefabFiles = {
 	"abby",
 	'abigail_attack_fx',
 	"abigailforcefield",
+
 }
 
 
@@ -345,8 +346,7 @@ AddComponentPostInit("health",
 
 
 
-AddStategraphState("wilson", State
-{
+AddStategraphState("wilson", State{
 	name = "summon_abigail",
 	tags = { "doing", "busy", "nodangle", "canrotate" },
 
@@ -373,8 +373,8 @@ AddStategraphState("wilson", State
 			end
 		end),
 		
-		TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
-		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon") end),
+		TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/puke_out") end),
+		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/saddle/shake_off") end),
 
 		TimeEvent(52 * FRAMES, function(inst) 
 			inst.sg.statemem.fx = SpawnPrefab("abigailsummonfx")
@@ -424,16 +424,24 @@ AddStategraphState("wilson", State{
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
 
-        if inst.bufferedaction ~= nil then
+   --      if inst.buffer edaction ~= nil then
+			-- local flower = inst.bufferedaction.invobject
+   --          if flower ~= nil then
+   --              inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+			-- end
+
+   --          inst.sg.statemem.action = inst.bufferedaction
+
+   --      end
+		if inst.bufferedaction ~= nil then
 			local flower = inst.bufferedaction.invobject
             if flower ~= nil then
-                local skin_build = flower:GetSkinBuild()
                 inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-			end
+				end
 
-            inst.sg.statemem.action = inst.bufferedaction
+                inst.sg.statemem.action = inst.bufferedaction
 
-        end
+            end
     end,
 
     timeline =
@@ -485,14 +493,14 @@ AddStategraphState("wilson", State{
 
             inst.sg.statemem.action = inst.bufferedaction
 
-			inst.components.talker:Say(GetString(inst, "ANNOUNCE_ABIGAIL_RETRIEVE"), nil, nil, true)
+			inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ABIGAIL_RETRIEVE"))
         end
     end,
 
     timeline =
     {
-        TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
-        TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/recall") end),
+        TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/positive") end),
+        TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/beg") end),
         TimeEvent(26 * FRAMES, function(inst) 
 			inst.sg:RemoveStateTag("busy")
 
@@ -506,17 +514,17 @@ AddStategraphState("wilson", State{
             end
 
 			if inst:PerformBufferedAction() then
-				local fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailunsummonfx_mount" or "abigailunsummonfx")
+				local fx = SpawnPrefab("abigailunsummonfx")
 				fx.entity:SetParent(inst.entity)
 				fx.Transform:SetRotation(inst.Transform:GetRotation())
                 fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
                 
-                if flower ~= nil then
-                    local skin_build = flower:GetSkinBuild()
-                    if skin_build ~= nil then
-                        fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
-                    end
-                end
+                -- if flower ~= nil then
+                --     local skin_build = flower:GetSkinBuild()
+                --     if skin_build ~= nil then
+                --         fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                --     end
+                -- end
 			else
                 inst.sg:GoToState("idle")
 			end

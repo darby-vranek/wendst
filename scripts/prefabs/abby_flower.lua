@@ -291,17 +291,17 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
         -- if is_mounted then
      --        inst.Transform:SetSixFaced()
         -- else
-            inst.Transform:SetFourFaced()
+        inst.Transform:SetFourFaced()
         -- end
 
     
         inst.AnimState:SetBank(anim)
-        if use_anim_for_build then
-            inst.AnimState:SetBuild(anim)
-            inst.AnimState:OverrideSymbol("flower", "abigail_flower_rework", "flower")
-        else
-            inst.AnimState:SetBuild("abigail_flower_rework")
-        end
+        -- if use_anim_for_build then
+        --     inst.AnimState:SetBuild(anim)
+        --     inst.AnimState:OverrideSymbol("flower", "abigail_flower_rework", "flower")
+        -- else
+        inst.AnimState:SetBuild("abigail_flower_rework")
+        -- end
         inst.AnimState:PlayAnimation(anim)
 
         -- if is_mounted then

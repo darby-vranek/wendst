@@ -81,7 +81,7 @@ local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloadi
     print("ghostlybond_onlevelchange")
     inst._bondlevel = level
 
-    if inst.components.talker ~= nil and level > 1 then
+    if not isloading and inst.components.talker ~= nil and level > 1 then
         print("talker")
         inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
         OnBondLevelDirty(inst)
