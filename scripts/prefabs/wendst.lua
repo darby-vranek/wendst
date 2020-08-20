@@ -105,6 +105,7 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     if inst.components.talker ~= nil then
         inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
+    inst.sg:GoToState("unsummon_abigail")
 
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
@@ -118,6 +119,7 @@ local function ghostlybond_changebehaviour(inst, ghost)
         print("ghost:BecomeDefensive()")
         ghost:BecomeDefensive()
     end
+    inst.sg:GoToState("commune_with_abigail")
     return true
 end
 
