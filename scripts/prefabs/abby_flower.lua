@@ -189,7 +189,6 @@ local function fn()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     inst.entity:AddMiniMapEntity()
-    -- inst.entity:AddNetwork() dont think i need that
 
     inst.AnimState:SetBank("abigail_flower_rework")
     inst.AnimState:SetBuild("abigail_flower_rework")
@@ -286,7 +285,6 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
 
         inst.entity:AddTransform()
         inst.entity:AddAnimState()
-        inst.entity:AddNetwork()
 
         inst:AddTag("FX")
 

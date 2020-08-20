@@ -23,6 +23,7 @@ local prefabs =
 local brain = require("brains/abbybrain")
 
 local function UpdateGhostlyBondLevel(inst, level)
+    print("abby:UpdateGhostlyBondLevel("..level..")")
     local max_health = level == 3 and TUNING.ABIGAIL_HEALTH_LEVEL3
                     or level == 2 and TUNING.ABIGAIL_HEALTH_LEVEL2
                     or TUNING.ABIGAIL_HEALTH_LEVEL1
@@ -85,29 +86,25 @@ local function HasFriendlyLeader(inst, target)
             end
         end
 
-        -- return leader == target or (target_leader ~= nil 
-        --         and (target_leader == leader or (target_leader:HasTag("player") 
-        --         and not PVP_enabled))) or
-        --         (target.components.domesticatable and target.components.domesticatable:IsDomesticated() 
-        --         and not PVP_enabled) or
-        --         (target.components.saltlicker and target.components.saltlicker.salted
-        --         and not PVP_enabled)
-        return leader == target
+    return leader == target or (
+        target_leader ~= nil 
+            and (target_leader == leader or (target_leader:HasTag("player"))))
     end
 
     return false    
 end
 
 local function CommonRetarget(inst, v)
+    -- print("abby:CommonRetarget(v)")
     return v ~= inst and v ~= inst._playerlink and v.entity:IsVisible()
             and v:GetDistanceSqToInst(inst._playerlink) < COMBAT_TARGET_DSQ
             and inst.components.combat:CanTarget(v)
-            -- and v.components.minigame_participator == nil
             and not HasFriendlyLeader(inst, v)
 
 end
 
 local function DefensiveRetarget(inst)
+    -- print("abby:DefensiveRetarget()")
     if inst._playerlink == nil then
         return nil
     elseif not IsWithinDefensiveRange(inst) then
@@ -136,6 +133,7 @@ local function DefensiveRetarget(inst)
 end
 
 local function AggressiveRetarget(inst)
+    -- print("abby:AggressiveRetarget()")
     if inst._playerlink == nil then
         return nil
     else
@@ -159,28 +157,56 @@ local function AggressiveRetarget(inst)
 end
 
 -- this is gonna cause me some issues without the ectoherbology stuff in place - I shouldn't run this
+-- local function StartForceField(inst)
+--     if not inst.sg:HasStateTag("dissipate") and (inst.components.health == nil or not inst.components.health:IsDead()) then
+--         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+--         -- commented out as I do not have elixirs in place
+--         -- inst.components.debuffable:AddDebuff("forcefield", elixir_buff ~= nil and elixir_buff.potion_tunings.shield_prefab or "abigailforcefield")
+--         inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
+--         -- print("would use forcefield here if debuff existed")
+--     end
+-- end
+
+-- removed elixir buff from line adding forcefield debuff until I get that in place
 local function StartForceField(inst)
-    if not inst.sg:HasStateTag("dissipate") and (inst.components.health == nil or not inst.components.health:IsDead()) then
-        local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
-        -- commented out as I do not have elixirs in place
-        -- inst.components.debuffable:AddDebuff("forcefield", elixir_buff ~= nil and elixir_buff.potion_tunings.shield_prefab or "abigailforcefield")
+    print("abby:StartForceField()")
+    if not inst.sg:HasStateTag("dissipate") and not inst.components.debuffable:HasDebuff("forcefield") and (inst.components.health == nil or not inst.components.health:IsDead()) then
+        -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
         inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
-        -- print("would use forcefield here if debuff existed")
     end
 end
 
+-- local function OnAttacked(inst, data)
+--     print("abby:OnAttacked(data)")
+--     if data.attacker == nil then
+--         inst.components.combat:SetTarget(nil)
+--     elseif not data.attacker:HasTag("noauradamage") then
+--         if not inst.is_defensive then
+--             inst.components.combat:SetTarget(data.attacker)
+--         elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
+--             -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
+--             inst.components.combat:SetTarget(data.attacker)
+--         end
+--     end
 
-local function Retarget(inst)
-    print("local function Retarget(inst)")
 
-    local newtarget = FindEntity(inst, 20, function(guy)
-            return  guy.components.combat and 
-                    inst.components.combat:CanTarget(guy) and
-                    (guy.components.combat.target == GetPlayer() or GetPlayer().components.combat.target == guy)
-    end)
+--     -- commenting this out as I don't have ectoherbology set up
+--     if inst.components.debuffable:HasDebuff("forcefield") then
+--         if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
+--     --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+--     --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
+--             local retaliation = SpawnPrefab("abigail_retaliation")
+--             retaliation:SetRetaliationTarget(data.attacker)
+--     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+--     --         else
+--     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+--         end
+--     --     end
+--     end
 
-    return newtarget
-end
+--     StartForceField(inst)
+-- end
+
 
 local function OnAttacked(inst, data)
     if data.attacker == nil then
@@ -194,20 +220,20 @@ local function OnAttacked(inst, data)
         end
     end
 
-
-    -- commenting this out as I don't have ectoherbology set up
-    if inst.components.debuffable:HasDebuff("forcefield") then
-        if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
-    --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
-    --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
-            local retaliation = SpawnPrefab("abigail_retaliation")
-            retaliation:SetRetaliationTarget(data.attacker)
-    --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
-    --         else
-    --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
-        end
-    --     end
-    end
+-- I don'have elixirs in place, so I'll leave that out for now
+    -- if inst.components.debuffable:HasDebuff("forcefield") then
+    --     if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
+            -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
+            -- if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
+                -- local retaliation = SpawnPrefab("abigail_retaliation")
+                -- retaliation:SetRetaliationTarget(data.attacker)
+                -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+            -- else
+                --  need to get sound emitter in place
+                -- inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
+            -- end
+        -- end
+    -- end
 
     StartForceField(inst)
 end
@@ -267,7 +293,7 @@ end
 local function UpdateDamage(inst)
     -- local buff = inst.components.debuffable:GetDebuff("elixir_buff")
 
-    -- this could be a problem
+    -- I'm going to need to update this once I add elixirs
     local phase = GetClock():GetPhase()
     inst.components.combat.defaultdamage = (TUNING.ABIGAIL_DAMAGE[phase] or TUNING.ABIGAIL_DAMAGE.day) / TUNING.ABIGAIL_VEX_DAMAGE_MOD -- so abigail does her intended damage defined in tunings.lua
 
@@ -301,20 +327,6 @@ local function DoAppear(sg)
     sg:GoToState("appear")
 end
 
--- commenting this one out for now as it's for that pet ui
--- local function OnDebuffAdded(inst, name, debuff)
---     if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil and name == "elixir_buff" then
---         inst._playerlink.components.pethealthbar:SetSymbol(debuff.prefab)
---     end
--- end
-
--- and this one too
--- local function OnDebuffRemoved(inst, name, debuff)
---     if inst._playerlink ~= nil and inst._playerlink.components.pethealthbar ~= nil and name == "elixir_buff" then
---         inst._playerlink.components.pethealthbar:SetSymbol(0)
---     end
--- end
-
 local function on_ghostlybond_level_change(inst, player, data)
     print("abby - on_ghostlybond_level_change")
     if not inst.inlimbo and data.level > 1 and not inst.sg:HasStateTag("busy") and (inst.components.health == nil or not inst.components.health:IsDead()) then
@@ -346,17 +358,12 @@ local function ApplyDebuff(inst, data)
             target:AddComponent("debuffable")
         end
         local debuff = target.components.debuffable:AddDebuff("abigail_vex_debuff", "abigail_vex_debuff")
-
-        -- local skin_build = inst:GetSkinBuild()
-        -- if  debuff ~= nil then
-        --     debuff.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
-        -- end
     end
 end
 
 local function linktoplayer(inst, player)
-    -- player = player or GetPlayer()
-    -- inst.persists = false
+    -- putting inst.persists in because i've seen that in DS
+    inst.persists = false
     inst._playerlink = player
 
     BecomeDefensive(inst)
@@ -365,15 +372,6 @@ local function linktoplayer(inst, player)
     inst:ListenForEvent("onareaattackother", ApplyDebuff)
 
     player.components.leader:AddFollower(inst)
-    -- I don't have this set up yet
-    -- if player.components.pethealthbar ~= nil then
-    --     player.components.pethealthbar:SetPet(inst, "", TUNING.ABIGAIL_HEALTH_LEVEL1)
-
-    --     local elixir_buff = inst.components.debuffable ~= nil and inst.components.debuffable:GetDebuff("elixir_buff") or nil
-    --     if elixir_buff then
-    --         player.components.pethealthbar:SetSymbol(elixir_buff.prefab)
-    --     end
-    -- end
 
     UpdateGhostlyBondLevel(inst, player.components.ghostlybond.bondlevel)
     inst:ListenForEvent("ghostlybond_level_change", inst.on_ghostlybond_level_change, player)
@@ -382,11 +380,11 @@ local function linktoplayer(inst, player)
     player.components.sanity:DoDelta(TUNING.SANITY_MED)
 end
 
-local function OnExitLimbo(inst)
-    local level = (inst._playerlink ~= nil and inst._playerlink.components.ghostlybond ~= nil) and inst._playerlink.components.ghostlybond.bondlevel or 1
-    local light_vals = TUNING.ABIGAIL_LIGHTING[level] or TUNING.ABIGAIL_LIGHTING[1]
-    inst.Light:Enable(light_vals.r ~= 0)
-end
+-- local function OnExitLimbo(inst)
+--     local level = (inst._playerlink ~= nil and inst._playerlink.components.ghostlybond ~= nil) and inst._playerlink.components.ghostlybond.bondlevel or 1
+--     local light_vals = TUNING.ABIGAIL_LIGHTING[level] or TUNING.ABIGAIL_LIGHTING[1]
+--     inst.Light:Enable(light_vals.r ~= 0)
+-- end
 
 local function getstatus(inst)
     local bondlevel = (inst._playerlink ~= nil and inst._playerlink.components.ghostlybond ~= nil) and inst._playerlink.components.ghostlybond.bondlevel or 0
@@ -487,6 +485,8 @@ local function fn(Sim)
     inst.AnimState:SetBank("ghost")
     inst.AnimState:SetBuild("ghost_abigail_build")
     inst.AnimState:PlayAnimation("idle", true)
+    -- need to replace with actual sounds
+    -- inst.AnimState:SetBloomEffectHandle("shaders/anim_bloom_ghost.ksh")
     anim:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     inst:AddTag("character")
@@ -496,6 +496,7 @@ local function fn(Sim)
     inst:AddTag("noauradamage")
     inst:AddTag("notraptrigger")
     inst:AddTag("abby")
+    inst:AddTag("abigail")
     inst:AddTag("NOBLOCK")
 
     -- inst:AddTag("trader") --trader (from trader component) added to pristine state for optimization
@@ -533,7 +534,7 @@ local function fn(Sim)
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = getstatus
 
-    -- inst:AddComponent("debuffable")
+    inst:AddComponent("debuffable")
     -- inst.components.debuffable.ondebuffadded = OnDebuffAdded
     -- inst.components.debuffable.ondebuffremoved = OnDebuffRemoved
 
@@ -556,6 +557,7 @@ local function fn(Sim)
     inst.auratest = auratest
 
     -- i worry
+    --  this is definitely a DST thing but I think I can define that with proper stategraphs
     -- MakeHauntableGoToState(inst, "haunted", nil, 64 * FRAMES * 1.2)
 
     ------------------
@@ -578,7 +580,7 @@ local function fn(Sim)
     inst:ListenForEvent("blocked", OnBlocked)
     inst:ListenForEvent("death", OnDeath)
     inst:ListenForEvent("onremoved", OnRemoved)
-    inst:ListenForEvent("exitlimbo", OnExitLimbo)
+    -- inst:ListenForEvent("exitlimbo", OnExitLimbo)
 
     inst.BecomeDefensive = BecomeDefensive
     inst.BecomeAggressive = BecomeAggressive
@@ -597,9 +599,14 @@ local function fn(Sim)
 
     inst.UpdateDamage = UpdateDamage
 
-    inst:ListenForEvent( "dusktime", function() inst:UpdateDamage() end , GetWorld())
-    inst:ListenForEvent( "daytime", function() inst:UpdateDamage() end , GetWorld())
-    inst:ListenForEvent( "nighttime", function() inst:UpdateDamage() end , GetWorld())
+    inst:ListenForEvent("phasechange", function()
+        inst:UpdateDamage() end, GetWorld())
+
+    -- inst:ListenForEvent( "dusktime", function() inst:UpdateDamage() end , GetWorld())
+    -- inst:ListenForEvent( "daytime", function() inst:UpdateDamage() end , GetWorld())
+    -- inst:ListenForEvent( "nighttime", function() inst:UpdateDamage() end , GetWorld())
+
+    -- not sure if I need this
     inst:UpdateDamage()
 
     -- inst:UpdateDamage()
