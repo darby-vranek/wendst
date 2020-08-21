@@ -86,7 +86,6 @@ local function onresurrection(inst)
 end
 
 local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloading)
-<<<<<<< HEAD
     print("ghostlybond_onlevelchange")
     inst._bondlevel = level
 
@@ -96,14 +95,12 @@ local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloadi
         OnBondLevelDirty(inst)
     end
     print("return to ghostlybond")
-=======
     inst._bondlevel = level
 
     if not isloading and inst.components.talker ~= nil and level > 1 then
         inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
         OnBondLevelDirty(inst)
     end
->>>>>>> experimental
 end
 
 local function ghostlybond_onsummon(inst, ghost)
@@ -202,9 +199,7 @@ local function fn(inst)
     inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
     inst.components.ghostlybond:Init("abby", TUNING.ABIGAIL_BOND_LEVELUP_TIME)
 
-<<<<<<< HEAD
     inst.components.combat.customdamagemultfn = CustomCombatDamage
-=======
     -- inst.components.combat.customdamagemultfn = CustomCombatDamage
 
     -- inst:AddTag("elixirbrewer")
@@ -216,7 +211,6 @@ local function fn(inst)
         -- inst:AddComponent("pethealthbar")
     -- end
 
->>>>>>> experimental
     inst.AnimState:AddOverrideBuild("wendy_channel")
     inst.AnimState:AddOverrideBuild("player_idles_wendy")
     inst.AnimState:AddOverrideBuild("wendy_commune")

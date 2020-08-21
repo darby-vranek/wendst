@@ -173,10 +173,7 @@ local function StartForceField(inst)
     if not inst.sg:HasStateTag("dissipate") and not inst.components.debuffable:HasDebuff("forcefield") and (inst.components.health == nil or not inst.components.health:IsDead()) then
         -- local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
         inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
-<<<<<<< HEAD
-=======
         print("would use forcefield here if debuff existed")
->>>>>>> experimental
     end
 end
 

@@ -285,10 +285,7 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
 
         inst.entity:AddTransform()
         inst.entity:AddAnimState()
-<<<<<<< HEAD
-=======
         -- inst.entity:AddNetwork()
->>>>>>> experimental
 
         inst:AddTag("FX")
 
