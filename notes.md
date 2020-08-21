@@ -22,6 +22,11 @@
 * changed `MakeSummonFX` so that it doesn't run until after the animque is over
 	* didn't work, changing it back
 
+* fuck fuck mounts _are_ a thing in DS so I'll have to put those in
+	* fixed, I think - haven't tested
+
+* there are a ton of issues with "commune", but I think the problem I'm having that stops the flower from appearing in Wendy's hand is due to `inst.bufferedaction.invobject` being nil. Not sure what I've done wrong there but perhaps it's how I registered things in `summoningitem.lua`?
+
 
 
 

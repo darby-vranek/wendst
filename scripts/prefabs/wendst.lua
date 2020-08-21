@@ -7,8 +7,13 @@ local assets =
     Asset("SOUND", "sound/wendy.fsb"),
 
     Asset("ANIM", "anim/wendy_channel.zip"),
+    Asset("ANIM", "anim/wendy_channel_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_channel.zip"),
     Asset("ANIM", "anim/wendy_recall.zip"),
+    Asset("ANIM", "anim/wendy_recall_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_recall.zip"),
     Asset("ANIM", "anim/player_wendy_commune.zip"),
+    Asset("ANIM", "anim/player_wendy_mount_commune.zip"),
     Asset("ANIM", "anim/wendy_flower_over.zip"),
     Asset("ANIM", "anim/player_idles_wendy.zip"),
 }
@@ -18,7 +23,9 @@ local prefabs =
     "abby",
     "abby_flower",
     "abigailsummonfx",
+    "abigailsummonfx_mount",
     "abigailunsummonfx",
+    "abigailunsummonfx_mount",
 }
 
 local start_inv =
@@ -186,6 +193,8 @@ local function fn(inst)
 
     inst.components.combat.customdamagemultfn = CustomCombatDamage
     inst.AnimState:AddOverrideBuild("wendy_channel")
+    inst.AnimState:AddOverrideBuild("player_idles_wendy")
+    inst.AnimState:AddOverrideBuild("wendy_commune")
 
     -- inst._bondlevel = net_tinybyte(inst.GUID, "wendy._bondlevel", "_bondleveldirty")
     inst._bondlevel = inst.components.ghostlybond.bondlevel
