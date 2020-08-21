@@ -345,8 +345,7 @@ AddComponentPostInit("health",
 
 
 
-AddStategraphState("wilson", State
-{
+AddStategraphState("wilson", State{
 	name = "summon_abigail",
 	tags = { "doing", "busy", "nodangle", "canrotate" },
 
@@ -373,8 +372,8 @@ AddStategraphState("wilson", State
 			end
 		end),
 		
-		TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
-		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon") end),
+		TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/common/haunted_flower_LP") end),
+		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/saddle/shake_off") end),
 
 		TimeEvent(52 * FRAMES, function(inst) 
 			inst.sg.statemem.fx = SpawnPrefab("abigailsummonfx")
@@ -390,7 +389,7 @@ AddStategraphState("wilson", State
 			if inst:PerformBufferedAction() then
 				inst.sg.statemem.fx = nil
 			else
-				inst.sg:GoToState("idle")
+				-- inst.sg:GoToState("idle")
 			end
 		end),
 		TimeEvent(74 * FRAMES, function(inst) inst.sg:RemoveStateTag("busy") end),
@@ -415,11 +414,12 @@ AddStategraphState("wilson", State
 		end
 	end,
 })
+
 AddStategraphState("wilson", State{
-	name = "commune_with_abigail",
+    name = "commune_with_abigail",
     tags = { "doing", "busy", "nodangle" },
 
-    onenter = function(inst)
+	onenter = function(inst)
         inst.components.locomotor:Stop()
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
@@ -427,8 +427,12 @@ AddStategraphState("wilson", State{
         if inst.bufferedaction ~= nil then
 			local flower = inst.bufferedaction.invobject
             if flower ~= nil then
-                local skin_build = flower:GetSkinBuild()
+                -- local skin_build = flower:GetSkinBuild()
+                -- if skin_build ~= nil then
+                --     inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                -- else
                 inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+                -- end
 			end
 
             inst.sg.statemem.action = inst.bufferedaction
@@ -463,88 +467,82 @@ AddStategraphState("wilson", State{
         end
     end,
 })
+
 AddStategraphState("wilson", State{
-    name = "unsummon_abigail",
-    tags = { "doing", "busy", "nodangle" },
+        name = "unsummon_abigail",
+        tags = { "doing", "busy", "nodangle" },
 
-    onenter = function(inst)
-        inst.components.locomotor:Stop()
-        inst.AnimState:PlayAnimation("wendy_recall")
-        inst.AnimState:PushAnimation("wendy_recall_pst", false)
+        onenter = function(inst)
+            inst.components.locomotor:Stop()
+            inst.AnimState:PlayAnimation("wendy_recall")
+            inst.AnimState:PushAnimation("wendy_recall_pst", false)
 
-        if inst.bufferedaction ~= nil then
-            local flower = inst.bufferedaction.invobject
-            if flower ~= nil then
-                local skin_build = flower:GetSkinBuild()
-                if skin_build ~= nil then
-                    inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
-                else
+            if inst.bufferedaction ~= nil then
+                local flower = inst.bufferedaction.invobject
+                if flower ~= nil then
                     inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
                 end
+
+                inst.sg.statemem.action = inst.bufferedaction
+
+                inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ABIGAIL_RETRIEVE"))
             end
+        end,
 
-            inst.sg.statemem.action = inst.bufferedaction
+        timeline =
+        {
+            TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_attack_LP", "angry") end),
+            TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_attack_LP", "angry") end),
+            TimeEvent(26 * FRAMES, function(inst) 
+                inst.sg:RemoveStateTag("busy")
 
-			inst.components.talker:Say(GetString(inst, "ANNOUNCE_ABIGAIL_RETRIEVE"), nil, nil, true)
-        end
-    end,
-
-    timeline =
-    {
-        TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
-        TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/recall") end),
-        TimeEvent(26 * FRAMES, function(inst) 
-			inst.sg:RemoveStateTag("busy")
-
-            if inst.components.talker ~= nil then
-				inst.components.talker:ShutUp()
-			end
-
-            local flower = nil
-            if inst.bufferedaction ~= nil then
-                flower = inst.bufferedaction.invobject
-            end
-
-			if inst:PerformBufferedAction() then
-				local fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailunsummonfx_mount" or "abigailunsummonfx")
-				fx.entity:SetParent(inst.entity)
-				fx.Transform:SetRotation(inst.Transform:GetRotation())
-                fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
-                
-                if flower ~= nil then
-                    local skin_build = flower:GetSkinBuild()
-                    if skin_build ~= nil then
-                        fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
-                    end
+                if inst.components.talker ~= nil then
+                    inst.components.talker:ShutUp()
                 end
-			else
-                inst.sg:GoToState("idle")
-			end
-		end),
-    },
 
-    events =
-    {
-        EventHandler("animqueueover", function(inst)
-            if inst.AnimState:AnimDone() then
-                inst.sg:GoToState("idle")
+                local flower = nil
+                if inst.bufferedaction ~= nil then
+                    flower = inst.bufferedaction.invobject
+                end
+
+                -- if inst:PerformBufferedAction() then
+                    local fx = SpawnPrefab("abigailunsummonfx")
+                    fx.entity:SetParent(inst.entity)
+                    fx.Transform:SetRotation(inst.Transform:GetRotation())
+                    fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
+                    
+                    -- if flower ~= nil then
+                        -- local skin_build = flower:GetSkinBuild()
+                        -- if skin_build ~= nil then
+                        --     fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
+                        -- end
+                    -- end
+                -- else
+                    -- inst.sg:GoToState("idle")
+                -- end
+            end),
+        },
+		events =
+        {
+            EventHandler("animqueueover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst.sg:GoToState("idle")
+                end
+            end),
+        },
+
+        onexit = function(inst)
+            inst.AnimState:ClearOverrideSymbol("flower")
+            if inst.bufferedaction == inst.sg.statemem.action then
+                inst:ClearBufferedAction()
             end
-        end),
-    },
+        end,
+    })
 
-    onexit = function(inst)
-        inst.AnimState:ClearOverrideSymbol("flower")
-        if inst.bufferedaction == inst.sg.statemem.action then
-            inst:ClearBufferedAction()
-        end
-    end,
-})
-
-AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTSUMMON,
-	function(inst, action)
-		print("summon action handler")
-		return action.invobject ~= nil and action.invobject:HasTag("abigail_flower") and "summon_abigail" or "castspell"
-	end))
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,
+        function(inst, action)
+            return action.invobject ~= nil and action.invobject:HasTag("abby_flower") and "unsummon_abigail" or "castspell"
+        end))
 
 
 AddMinimapAtlas("minimap/wendst.xml")

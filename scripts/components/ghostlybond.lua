@@ -27,7 +27,6 @@ end
 local function _ghost_death(self)
 	print("_ghost_death")
 	self:SetBondLevel(1)
-	print("finished setting bond level")
 	self:Recall(true)
 end
 
@@ -129,7 +128,6 @@ function GhostlyBond:PauseBonding()
 end
 
 function GhostlyBond:SetBondLevel(level, time, isloading)
-	-- print("function GhostlyBond:SetBondLevel("..level..")")
 	time = time or 0
 	local prev_level = self.bondlevel
 	self.bondlevel = math.min(level, self.maxbondlevel)
@@ -138,13 +136,10 @@ function GhostlyBond:SetBondLevel(level, time, isloading)
 		self.inst:StartUpdatingComponent(self)
 	end
 
-	if self.onbondlevelchangefn ~= nil then
-		-- print("onbondlevelchangefn")
-		self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
-	end
-	print("return to setbondlevel()")
-	-- self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
-	-- print("pushed event")
+		if self.onbondlevelchangefn ~= nil then
+			self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
+		end
+		self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
 end
 
 -- end bondlevel stuff
@@ -202,7 +197,6 @@ function GhostlyBond:SummonComplete()
 end
 
 function GhostlyBond:Recall(was_killed)
-	print("function GhostlyBond:Recall()")
 	if self.ghost ~= nil and self.summoned and not self.inst.sg:HasStateTag("dissipate") then
 		self.summoned = false
 
@@ -234,8 +228,8 @@ function GhostlyBond:ChangeBehaviour()
 	return false
 end
 
--- function GhostlyBond:GetDebugString()
--- 	return tostring(self.ghost)..", "..tostring(self.bondlevel)..(self.bondleveltimer ~= nil and (", "..string.format("%0.2f", self.bondlevelmaxtime - self.bondleveltimer)) or "max") .. ", mult: " .. string.format("%0.2f", self.inst.components.ghostlybond.externalbondtimemultipliers:Get()).. (self.paused and ", paused" or "")
--- end
+function GhostlyBond:GetDebugString()
+	return tostring(self.ghost)..", "..tostring(self.bondlevel)..(self.bondleveltimer ~= nil and (", "..string.format("%0.2f", self.bondlevelmaxtime - self.bondleveltimer)) or "max") .. ", mult: " .. string.format("%0.2f", self.inst.components.ghostlybond.externalbondtimemultipliers:Get()).. (self.paused and ", paused" or "")
+end
 
 return GhostlyBond

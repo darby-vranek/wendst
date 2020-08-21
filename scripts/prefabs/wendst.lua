@@ -1,11 +1,13 @@
 local MakePlayerCharacter = require("prefabs/player_common")
 local WendyFlowerOver = require("widgets/wendyflowerover")
 
+-- require "stategraphs/SGwendst"
+
 local assets =
 {
     Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
     Asset("SOUND", "sound/wendy.fsb"),
-
+    -- Asset("ANIM", "anim/wendy.zip"),
     Asset("ANIM", "anim/wendy_channel.zip"),
     Asset("ANIM", "anim/wendy_recall.zip"),
     Asset("ANIM", "anim/player_wendy_commune.zip"),
@@ -29,15 +31,14 @@ local start_inv =
 
 
 local function OnBondLevelDirty(inst)
-    print("OnBondLevelDirty")
-    if inst.HUD ~= nil and not inst:HasTag("playerghost") then
-        local bond_level = inst._bondlevel
+    -- if inst.HUD ~= nil and not inst:HasTag("playerghost") then
+        local bond_level = inst._bondlevel:value()
         if bond_level > 1 then
             if inst.HUD.wendyflowerover ~= nil then
                 inst.HUD.wendyflowerover:Play( bond_level )
             end
         end
-    end
+    -- end
 end
 
 -- not sure if I need this
@@ -78,6 +79,7 @@ local function onresurrection(inst)
 end
 
 local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloading)
+<<<<<<< HEAD
     print("ghostlybond_onlevelchange")
     inst._bondlevel = level
 
@@ -87,6 +89,14 @@ local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloadi
         OnBondLevelDirty(inst)
     end
     print("return to ghostlybond")
+=======
+    inst._bondlevel = level
+
+    if not isloading and inst.components.talker ~= nil and level > 1 then
+        inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
+        OnBondLevelDirty(inst)
+    end
+>>>>>>> experimental
 end
 
 local function ghostlybond_onsummon(inst, ghost)
@@ -97,7 +107,6 @@ local function ghostlybond_onsummon(inst, ghost)
 end
 
 local function ghostlybond_onrecall(inst, ghost, was_killed)
-    print("ghostlybond_onrecall")
     if inst.components.sanity ~= nil then
         inst.components.sanity:DoDelta(was_killed and (-TUNING.SANITY_MED * 2) or -TUNING.SANITY_MED)
     end
@@ -133,9 +142,7 @@ end
 -- end
 
 local function CustomCombatDamage(inst, target)
-    return (target.components.debuffable ~= nil and target.components.debuffable:HasDebuff("abigail_vex_debuff")) and TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD 
-        or (target == inst.components.ghostlybond.ghost and target:HasTag("abby")) and 0
-        or 1
+    return 1
 end
 
 -------------------------------------------------------------------------------
@@ -168,12 +175,16 @@ end
 local function fn(inst)
     print("WENDST INIT")
     inst.soundsname = "wendy"
+    
     inst.MiniMapEntity:SetIcon("wendst.tex")
+    inst:SetStateGraph("SGwilson")
     inst.AnimState:SetBuild("wendy")
     
     inst.components.sanity.night_drain_mult = TUNING.WENDY_SANITY_MULT
     inst.components.sanity.neg_aura_mult = TUNING.WENDY_SANITY_MULT
     inst.components.combat.damagemultiplier = TUNING.WENDY_DAMAGE_MULT
+
+
 
     inst:AddTag("ghostlyfriend")
 
@@ -185,11 +196,25 @@ local function fn(inst)
     inst.components.ghostlybond.changebehaviourfn = ghostlybond_changebehaviour
     inst.components.ghostlybond:Init("abby", TUNING.ABIGAIL_BOND_LEVELUP_TIME)
 
+<<<<<<< HEAD
     inst.components.combat.customdamagemultfn = CustomCombatDamage
+=======
+    -- inst.components.combat.customdamagemultfn = CustomCombatDamage
+
+    -- inst:AddTag("elixirbrewer")
+
+ --    if TheNet:GetServerGameMode() == "quagmire" then
+ --        inst:AddTag("quagmire_grillmaster")
+ --        inst:AddTag("quagmire_shopper")
+    -- else
+        -- inst:AddComponent("pethealthbar")
+    -- end
+
+>>>>>>> experimental
     inst.AnimState:AddOverrideBuild("wendy_channel")
 
     -- inst._bondlevel = net_tinybyte(inst.GUID, "wendy._bondlevel", "_bondleveldirty")
-    inst._bondlevel = inst.components.ghostlybond.bondlevel
+    inst._bondlevel = inst.components.ghostlybond.bond_level
 
     -- inst.OnDespawn = OnDespawn
     inst:ListenForEvent("death", ondeath)
