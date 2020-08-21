@@ -9,8 +9,13 @@ local assets =
     Asset("SOUND", "sound/wendy.fsb"),
     -- Asset("ANIM", "anim/wendy.zip"),
     Asset("ANIM", "anim/wendy_channel.zip"),
+    Asset("ANIM", "anim/wendy_channel_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_channel.zip"),
     Asset("ANIM", "anim/wendy_recall.zip"),
+    Asset("ANIM", "anim/wendy_recall_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_recall.zip"),
     Asset("ANIM", "anim/player_wendy_commune.zip"),
+    Asset("ANIM", "anim/player_wendy_mount_commune.zip"),
     Asset("ANIM", "anim/wendy_flower_over.zip"),
     Asset("ANIM", "anim/player_idles_wendy.zip"),
 }
@@ -20,7 +25,9 @@ local prefabs =
     "abby",
     "abby_flower",
     "abigailsummonfx",
+    "abigailsummonfx_mount",
     "abigailunsummonfx",
+    "abigailunsummonfx_mount",
 }
 
 local start_inv =
@@ -83,7 +90,7 @@ local function ghostlybond_onlevelchange(inst, ghost, level, prev_level, isloadi
     print("ghostlybond_onlevelchange")
     inst._bondlevel = level
 
-    if inst.components.talker ~= nil and level > 1 then
+    if not isloading and inst.components.talker ~= nil and level > 1 then
         print("talker")
         inst.components.talker:Say(GetString("wendy", "ANNOUNCE_GHOSTLYBOND_LEVELUP", "LEVEL"..tostring(level)))
         OnBondLevelDirty(inst)
@@ -115,7 +122,6 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
         inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
     inst.sg:GoToState("unsummon_abigail")
-
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
@@ -212,6 +218,8 @@ local function fn(inst)
 
 >>>>>>> experimental
     inst.AnimState:AddOverrideBuild("wendy_channel")
+    inst.AnimState:AddOverrideBuild("player_idles_wendy")
+    inst.AnimState:AddOverrideBuild("wendy_commune")
 
     -- inst._bondlevel = net_tinybyte(inst.GUID, "wendy._bondlevel", "_bondleveldirty")
     inst._bondlevel = inst.components.ghostlybond.bond_level

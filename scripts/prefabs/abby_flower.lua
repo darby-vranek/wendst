@@ -203,6 +203,7 @@ local function fn()
     
 
     inst:AddTag("abby_flower")
+    inst:AddTag("abigail_flower")
     inst:AddTag("give_dolongaction")
     -- inst:AddTag("ghostlyelixirable") -- for ghostlyelixirable component
 
@@ -257,13 +258,13 @@ end
 local assets_summonfx =
 {
     Asset("ANIM", "anim/wendy_channel_flower.zip"),
-    -- Asset("ANIM", "anim/wendy_mount_channel_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_channel_flower.zip"),
 }
 
 local assets_unsummonfx =
 {
     Asset("ANIM", "anim/wendy_recall_flower.zip"),
-    -- Asset("ANIM", "anim/wendy_mount_recall_flower.zip"),
+    Asset("ANIM", "anim/wendy_mount_recall_flower.zip"),
 }
 
 local assets_levelupfx =
@@ -291,11 +292,11 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
 
         inst:AddTag("FX")
 
-        -- if is_mounted then
-     --        inst.Transform:SetSixFaced()
-        -- else
-        inst.Transform:SetFourFaced()
-        -- end
+        if is_mounted then
+            inst.Transform:SetSixFaced()
+        else
+            inst.Transform:SetFourFaced()
+        end
 
     
         inst.AnimState:SetBank(anim)
@@ -307,10 +308,22 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
         end
         inst.AnimState:PlayAnimation(anim)
 
+        if is_mounted then
+            inst:AddComponent("updatelooper")
+            inst.components.updatelooper:AddOnWallUpdateFn(AlignToTarget)
+        end
+
+        -- inst.entity:SetPristine()
+
+        -- if not TheWorld.ismastersim then
+        --     return inst
+        -- end
+
         -- inst.persists = false
 
         --Anim is padded with extra blank frames at the end
-        inst:ListenForEvent("animover", inst.Remove)
+        -- moving to animqueover made this work
+        inst:ListenForEvent("animqueueover", inst.Remove)
 
         return inst
     end
@@ -318,7 +331,7 @@ end
 
 return Prefab("abby_flower", fn, assets, prefabs),
     Prefab("abigailsummonfx", MakeSummonFX("wendy_channel_flower", true, false), assets_summonfx),
-    -- Prefab("abigailsummonfx_mount", MakeSummonFX("wendy_mount_channel_flower", true, true), assets_summonfx),
+    Prefab("abigailsummonfx_mount", MakeSummonFX("wendy_mount_channel_flower", true, true), assets_summonfx),
     Prefab("abigailunsummonfx", MakeSummonFX("wendy_recall_flower", false, false), assets_unsummonfx),
-    -- Prefab("abigailunsummonfx_mount", MakeSummonFX("wendy_mount_recall_flower", false, true), assets_unsummonfx),
+    Prefab("abigailunsummonfx_mount", MakeSummonFX("wendy_mount_recall_flower", false, true), assets_unsummonfx),
     Prefab("abigaillevelupfx", MakeSummonFX("abigail_flower_change", false, false), assets_levelupfx)

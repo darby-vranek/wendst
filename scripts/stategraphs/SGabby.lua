@@ -27,10 +27,10 @@ local function startaura(inst)
     --     inst.attack_fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
     -- end
     
---   inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
---   inst:AddChild(inst.attack_fx_ground)
---   inst.attack_fx_ground.AnimState:PlayAnimation(attack_anim .. "_ground_pre")
---   inst.attack_fx_ground.AnimState:PushAnimation(attack_anim .. "_ground_loop", true)
+  -- inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
+  -- inst:AddChild(inst.attack_fx_ground)
+  -- inst.attack_fx_ground.AnimState:PlayAnimation(attack_anim .. "_ground_pre")
+  -- inst.attack_fx_ground.AnimState:PushAnimation(attack_anim .. "_ground_loop", true)
 end
 
 local function stopaura(inst)
@@ -265,7 +265,7 @@ local states =
         timeline =
         {
             TimeEvent(9*FRAMES, function(inst)
-                inst.SoundEmitter:PlaySound(inst.sg.statemem.level == 3 and "dontstarve/characters/wendy/abigail/level_change/2" or "dontstarve/characters/wendy/abigail/level_change/1")
+                inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentacle_rumble_LP", "tentacle")
             end),
 
             TimeEvent(10 * FRAMES, function(inst)
@@ -273,10 +273,10 @@ local states =
 				fx.entity:SetParent(inst.entity)
                 fx.Transform:SetRotation(inst.Transform:GetRotation())
                 
-                local skin_build = inst:GetSkinBuild()
-                if skin_build ~= nil then
-                    fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
-                end
+                -- local skin_build = inst:GetSkinBuild()
+                -- if skin_build ~= nil then
+                --     fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
+                -- end
             end),
         },
 

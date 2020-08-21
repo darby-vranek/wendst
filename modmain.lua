@@ -15,7 +15,7 @@ Assets = {
 
 	Asset( "IMAGE", "images/selectscreen_portraits/wendst.tex" ),
 	Asset( "ATLAS", "images/selectscreen_portraits/wendst.xml" ),
-	
+
 	Asset( "IMAGE", "images/selectscreen_portraits/wendst.tex" ),
 	Asset( "ATLAS", "images/selectscreen_portraits/wendst_silho.xml" ),
 	
@@ -26,12 +26,19 @@ Assets = {
 	Asset( "ATLAS", "minimap/wendst.xml" ),
 
 	Asset("ANIM", "anim/wendy_channel.zip"),
+	Asset("ANIM", "anim/wendy_channel_flower.zip"),
+
 	Asset("ANIM", "anim/wendy_recall.zip"),
+
 	Asset("ANIM", "anim/player_wendy_commune.zip"),
+
 	Asset("ANIM", "anim/wendy_flower_over.zip"),
 	Asset("ANIM", "anim/player_idles_wendy.zip"),
+
 	Asset("ANIM", "anim/abigail_shield.zip"),
 	Asset("ANIM", "anim/abigail_debuff_fx.zip"),
+	Asset("ANIM", "anim/abigail_buff_drip.zip"),
+	Asset("ANIM", "anim/abigail_attack_fx.zip"),
 
 	Asset("SOUND", "sound/wendy.fsb"),    
 }
@@ -183,78 +190,6 @@ TUNING.GHOSTLYELIXIR_RETALIATION_DAMAGE = 20
 TUNING.GHOSTLYELIXIR_RETALIATION_DURATION = total_day_time
 TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY = seg_time / 2
 
--- stategraphs
-
--- local sgsummon = State
--- {
--- 	name = "summon_abigail",
--- 	tags = { "doing", "busy", "nodangle", "canrotate" },
-
--- 	onenter = function(inst)
--- 		inst.components.locomotor:Stop()
--- 		inst.AnimState:PlayAnimation("wendy_channel")
--- 		inst.AnimState:PushAnimation("wendy_channel_pst", false)
-
--- 		if inst.bufferedaction ~= nil then
--- 			local flower = inst.bufferedaction.invobject
--- 			if flower ~= nil then
--- 				inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
--- 			end
-
--- 			inst.sg.statemem.action = inst.bufferedaction
--- 		end
--- 	end,
-
--- 	timeline =
--- 	{
--- 		TimeEvent(0 * FRAMES, function(inst)
--- 			if inst.components.talker ~= nil and inst.components.ghostlybond ~= nil then
--- 				inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ABIGAIL_SUMMON", "LEVEL"..tostring(math.max(inst.components.ghostlybond.bondlevel, 1))), nil, nil, true)
--- 			end
--- 		end),
-		
--- 		TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon_pre") end),
--- 		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/summon") end),
-
--- 		TimeEvent(52 * FRAMES, function(inst) 
--- 			inst.sg.statemem.fx = SpawnPrefab("abigailsummonfx")
--- 			inst.sg.statemem.fx.entity:SetParent(inst.entity)
--- 			inst.sg.statemem.fx.Transform:SetRotation(inst.Transform:GetRotation())
--- 			inst.sg.statemem.fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
-
--- 			if inst.components.talker ~= nil then
--- 				inst.components.talker:ShutUp()
--- 			end
--- 		end),
--- 		TimeEvent(62 * FRAMES, function(inst) 
--- 			if inst:PerformBufferedAction() then
--- 				inst.sg.statemem.fx = nil
--- 			else
--- 				inst.sg:GoToState("idle")
--- 			end
--- 		end),
--- 		TimeEvent(74 * FRAMES, function(inst) inst.sg:RemoveStateTag("busy") end),
--- 	},
-
--- 	events =
--- 	{
--- 		EventHandler("animqueueover", function(inst)
--- 			if inst.AnimState:AnimDone() then
--- 				inst.sg:GoToState("idle")
--- 			end
--- 		end),
--- 	},
-
--- 	onexit = function(inst)
--- 		inst.AnimState:ClearOverrideSymbol("flower")
--- 		if inst.sg.statemem.fx ~= nil then
--- 			inst.sg.statemem.fx:Remove()
--- 		end
--- 		if inst.bufferedaction == inst.sg.statemem.action then
--- 			inst:ClearBufferedAction()
--- 		end
--- 	end,
--- }
 
 -- actions
 
@@ -376,7 +311,7 @@ AddStategraphState("wilson", State{
 		TimeEvent(53*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/beefalo/saddle/shake_off") end),
 
 		TimeEvent(52 * FRAMES, function(inst) 
-			inst.sg.statemem.fx = SpawnPrefab("abigailsummonfx")
+			inst.sg.statemem.fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailsummonfx_mount" or "abigailsummonfx")
 			inst.sg.statemem.fx.entity:SetParent(inst.entity)
 			inst.sg.statemem.fx.Transform:SetRotation(inst.Transform:GetRotation())
 			inst.sg.statemem.fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
@@ -420,24 +355,27 @@ AddStategraphState("wilson", State{
     tags = { "doing", "busy", "nodangle" },
 
 	onenter = function(inst)
+		print("onenter commune_with_abigail")
         inst.components.locomotor:Stop()
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
 
-        if inst.bufferedaction ~= nil then
+        -- if inst.bufferedaction ~= nil then
+        	print("inst.bufferedaction ~= nil")
 			local flower = inst.bufferedaction.invobject
-            if flower ~= nil then
+            -- if flower ~= nil then
+            	print("flower ~= nil")
                 -- local skin_build = flower:GetSkinBuild()
                 -- if skin_build ~= nil then
                 --     inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
                 -- else
                 inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
                 -- end
-			end
+			-- end
 
             inst.sg.statemem.action = inst.bufferedaction
 
-        end
+        -- end
     end,
 
     timeline =
@@ -506,7 +444,7 @@ AddStategraphState("wilson", State{
                 end
 
                 -- if inst:PerformBufferedAction() then
-                    local fx = SpawnPrefab("abigailunsummonfx")
+                    local fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailunsummonfx_mount" or "abigailunsummonfx")
                     fx.entity:SetParent(inst.entity)
                     fx.Transform:SetRotation(inst.Transform:GetRotation())
                     fx.AnimState:SetTime(0) -- hack to force update the initial facing direction
@@ -541,6 +479,7 @@ AddStategraphState("wilson", State{
 
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,
         function(inst, action)
+        	print("ACTIONS.CASTUNSUMMON")
             return action.invobject ~= nil and action.invobject:HasTag("abby_flower") and "unsummon_abigail" or "castspell"
         end))
 
