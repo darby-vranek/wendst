@@ -505,7 +505,7 @@ AddStategraphState("wilson", State{
                     flower = inst.bufferedaction.invobject
                 end
 
-                if inst:PerformBufferedAction() then
+                -- if inst:PerformBufferedAction() then
                     local fx = SpawnPrefab("abigailunsummonfx")
                     fx.entity:SetParent(inst.entity)
                     fx.Transform:SetRotation(inst.Transform:GetRotation())
@@ -517,9 +517,9 @@ AddStategraphState("wilson", State{
                         --     fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
                         -- end
                     -- end
-                else
+                -- else
                     -- inst.sg:GoToState("idle")
-                end
+                -- end
             end),
         },
 		events =

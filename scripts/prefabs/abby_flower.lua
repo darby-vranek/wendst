@@ -316,10 +316,10 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
         --     return inst
         -- end
 
-        inst.persists = false
+        -- inst.persists = false
 
         --Anim is padded with extra blank frames at the end
-        -- inst:ListenForEvent("animover", inst.Remove)
+        inst:ListenForEvent("animqueueover", inst.Remove)
 
         return inst
     end
@@ -331,4 +331,3 @@ return Prefab("abby_flower", fn, assets, prefabs),
     Prefab("abigailunsummonfx", MakeSummonFX("wendy_recall_flower", false, false), assets_unsummonfx),
     -- Prefab("abigailunsummonfx_mount", MakeSummonFX("wendy_mount_recall_flower", false, true), assets_unsummonfx),
     Prefab("abigaillevelupfx", MakeSummonFX("abigail_flower_change", false, false), assets_levelupfx)
-    
