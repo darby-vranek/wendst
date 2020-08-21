@@ -17,6 +17,7 @@
 * removing helped - it looked like the entire summon animation plays out, but possibly too fast at the end??
 * flower in commune doesn't appeark
 * recall looks even worse
+* made changes to abby flower `local function MakeSummonFX(anim, use_anim_for_build, is_mounted)`
 
 
 
