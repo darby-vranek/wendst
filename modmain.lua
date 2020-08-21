@@ -389,7 +389,7 @@ AddStategraphState("wilson", State{
 			if inst:PerformBufferedAction() then
 				inst.sg.statemem.fx = nil
 			else
-				inst.sg:GoToState("idle")
+				-- inst.sg:GoToState("idle")
 			end
 		end),
 		TimeEvent(74 * FRAMES, function(inst) inst.sg:RemoveStateTag("busy") end),

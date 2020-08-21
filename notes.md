@@ -18,6 +18,9 @@
 * flower in commune doesn't appeark
 * recall looks even worse
 * made changes to abby flower `local function MakeSummonFX(anim, use_anim_for_build, is_mounted)`
+* removing `inst.sg:GoToState("idle")` from stategraph state allowed full recall animation to play out, though the flower itself was not visible
+* changed `MakeSummonFX` so that it doesn't run until after the animque is over
+	* didn't work, changing it back
 
 
 

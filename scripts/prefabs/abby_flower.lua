@@ -319,7 +319,7 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
         inst.persists = false
 
         --Anim is padded with extra blank frames at the end
-        inst:ListenForEvent("animover", inst.Remove)
+        -- inst:ListenForEvent("animover", inst.Remove)
 
         return inst
     end

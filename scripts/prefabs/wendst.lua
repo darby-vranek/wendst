@@ -106,7 +106,6 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
         inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
     inst.sg:GoToState("unsummon_abigail")
-
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
