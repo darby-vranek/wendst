@@ -120,10 +120,10 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
 -- SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
 -- SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
 
-SPEECH_WENDY.COMMUNEWITHSUMMONED = {
-	MAKE_AGGRESSIVE = "Rile Up",
-	MAKE_DEFENSIVE = "Soothe",
-}
+-- SPEECH_WENDY.COMMUNEWITHSUMMONED = {
+-- 	MAKE_AGGRESSIVE = "Rile Up",
+-- 	MAKE_DEFENSIVE = "Soothe",
+-- }
 
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
@@ -213,8 +213,9 @@ end
 local communewithsummoned = function(act)
 	print("commune act")
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-		return act.doer.components.ghostlybond:ChangeBehaviour()
+		return act.doer.components.ghostlybond:ChangeBehaviour(act.invobject.components.summoningitem.inst)
 	end
+	print("communewithsummoned")
 end
 
 local communewithsummonedstrfn = function(act)
@@ -244,7 +245,7 @@ local act_castsummon = {
 local act_castunsummon = {
 	id="CASTUNSUMMON",
 	instant=true,
-	mount_enabledd=true,
+	mount_enabled=true,
 	priority=3,
 	fn=castunsummon,
 	str="Recall",
@@ -253,7 +254,8 @@ local act_castunsummon = {
 local act_communewithsummoned = {
 	id="COMMUNEWITHSUMMONED",
 	instant=true,
-	mount_enabledd=true,
+	rmb=true,
+	mount_enabled=true,
 	priority=3,
 	fn=communewithsummoned,
 	strfn=communewithsummonedstrfn,
@@ -290,6 +292,7 @@ AddStategraphState("wilson", State{
 		inst.AnimState:PushAnimation("wendy_channel_pst", false)
 
 		if inst.bufferedaction ~= nil then
+			print("bufferedaction ~= nil")
 			local flower = inst.bufferedaction.invobject
 			if flower ~= nil then
 				inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
@@ -360,22 +363,17 @@ AddStategraphState("wilson", State{
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
 
-        -- if inst.bufferedaction ~= nil then
+        if inst.bufferedaction ~= nil then
         	print("inst.bufferedaction ~= nil")
 			local flower = inst.bufferedaction.invobject
-            -- if flower ~= nil then
+            if flower ~= nil then
             	print("flower ~= nil")
-                -- local skin_build = flower:GetSkinBuild()
-                -- if skin_build ~= nil then
-                --     inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
-                -- else
                 inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-                -- end
-			-- end
+			end
 
             inst.sg.statemem.action = inst.bufferedaction
 
-        -- end
+        end
     end,
 
     timeline =

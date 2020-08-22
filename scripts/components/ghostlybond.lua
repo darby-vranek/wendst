@@ -227,8 +227,9 @@ function GhostlyBond:RecallComplete()
 	end
 end
 
-function GhostlyBond:ChangeBehaviour()
+function GhostlyBond:ChangeBehaviour(summoningitem)
 	if self.ghost ~= nil and self.summoned and self.changebehaviourfn ~= nil then
+		-- self.inst.sg:GoToState("commune_with_abigail")
 		return self.changebehaviourfn(self.inst, self.ghost)
 	end
 	return false

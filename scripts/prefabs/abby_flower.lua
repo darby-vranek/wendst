@@ -26,10 +26,10 @@ local function UpdateInventoryActions(inst)
 end
 
 local function UpdateInventoryIcon(inst, player, level)
-    -- if inst._playerlink ~= player then
-        -- if inst._playerlink ~= nil then
-        --  inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
-        -- end
+    if inst._playerlink ~= player then
+        if inst._playerlink ~= nil then
+            inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+        end
 
         if player ~= nil and player.components.ghostlybond ~= nil then
             inst._playerlink = player
@@ -37,28 +37,61 @@ local function UpdateInventoryIcon(inst, player, level)
 
             UpdateInventoryActions(inst)
             if inst._inventoryactionstask == nil then
-                inst._inventoryactionstask = inst:DoPeriodicTask(0.0, UpdateInventoryActions)
+                inst._inventoryactionstask = inst:DoPeriodicTask(0.1, UpdateInventoryActions)
             end
-        -- else
-        --  inst._playerlink = nil
+        else
+            inst._playerlink = nil
 
-        --  if inst._inventoryactionstask ~= nil then
-        --      inst._inventoryactionstask:Cancel()
-        --      inst._inventoryactionstask = nil
-        --  end
+            if inst._inventoryactionstask ~= nil then
+                inst._inventoryactionstask:Cancel()
+                inst._inventoryactionstask = nil
+            end
         end
-    -- end
+    end
 
     level = level or (player ~= nil and player.components.ghostlybond ~= nil) and player.components.ghostlybond.bondlevel or 0
     if level == 1 then
         inst.components.inventoryitem:ChangeImageName("abigail_flower")
-    elseif level == 2 then
-        inst.components.inventoryitem:ChangeImageName("abigail_flower2")
     else
-        inst.components.inventoryitem:ChangeImageName("abigail_flower_haunted")
+        inst.components.inventoryitem:ChangeImageName(("abigail_flower") .. "_level" .. (level or 0))
     end
     inst._bond_level = level
 end
+
+-- local function UpdateInventoryIcon(inst, player, level)
+--     -- if inst._playerlink ~= player then
+--         -- if inst._playerlink ~= nil then
+--         --  inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+--         -- end
+
+--         if player ~= nil and player.components.ghostlybond ~= nil then
+--             inst._playerlink = player
+--             inst:ListenForEvent("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+
+--             UpdateInventoryActions(inst)
+--             if inst._inventoryactionstask == nil then
+--                 inst._inventoryactionstask = inst:DoPeriodicTask(0.0, UpdateInventoryActions)
+--             end
+--         -- else
+--         --  inst._playerlink = nil
+
+--         --  if inst._inventoryactionstask ~= nil then
+--         --      inst._inventoryactionstask:Cancel()
+--         --      inst._inventoryactionstask = nil
+--         --  end
+--         end
+--     -- end
+
+--     level = level or (player ~= nil and player.components.ghostlybond ~= nil) and player.components.ghostlybond.bondlevel or 0
+--     if level == 1 then
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower")
+--     elseif level == 2 then
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower2")
+--     else
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower_haunted")
+--     end
+--     inst._bond_level = level
+-- end
 
 local function UpdateGroundAnimation(inst)
     local x, y, z = inst.Transform:GetWorldPosition()

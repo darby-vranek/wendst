@@ -126,7 +126,7 @@ local function ghostlybond_changebehaviour(inst, ghost)
         ghost:BecomeDefensive()
     end
     inst.sg:GoToState("commune_with_abigail")
-    return true
+    -- return true
 end
 
 -- local function update_sisturn_state(inst, is_active)
