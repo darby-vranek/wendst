@@ -1,6 +1,7 @@
 local MakePlayerCharacter = require("prefabs/player_common")
 local WendyFlowerOver = require("widgets/wendyflowerover")
 
+
 local assets =
 {
     Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
@@ -100,7 +101,7 @@ local function ghostlybond_onsummon(inst, ghost)
     if inst.components.sanity ~= nil then
         inst.components.sanity:DoDelta(TUNING.SANITY_MED)
     end
-    inst.sg:GoToState("summon_abigail")
+    -- inst.sg:GoToState("summon_abigail")
 end
 
 local function ghostlybond_onrecall(inst, ghost, was_killed)
@@ -112,7 +113,7 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     if inst.components.talker ~= nil then
         inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
-    inst.sg:GoToState("unsummon_abigail")
+    -- inst.sg:GoToState("unsummon_abigail")
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
@@ -125,8 +126,8 @@ local function ghostlybond_changebehaviour(inst, ghost)
         print("ghost:BecomeDefensive()")
         ghost:BecomeDefensive()
     end
-    inst.sg:GoToState("commune_with_abigail")
-    -- return true
+    -- inst.sg:GoToState("commune_with_abigail")
+    return true
 end
 
 -- local function update_sisturn_state(inst, is_active)
@@ -174,6 +175,7 @@ end
 local function fn(inst)
     print("WENDST INIT")
     inst.soundsname = "wendy"
+    inst:SetStateGraph("SGwilson")
     inst.MiniMapEntity:SetIcon("wendst.tex")
     inst.AnimState:SetBuild("wendy")
     
@@ -202,4 +204,5 @@ local function fn(inst)
     -- inst.OnDespawn = OnDespawn
     inst:ListenForEvent("death", ondeath)
 end
+
 return MakePlayerCharacter("wendst", prefabs, assets, fn, start_inv)

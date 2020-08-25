@@ -3,23 +3,12 @@ local assets =
     Asset("ANIM", "anim/abigail_flower.zip"),
     Asset("ANIM", "anim/abigail_flower_rework.zip"),
 
-    -- Asset("INV_IMAGE", "abigail_flower_level0"),
-    -- Asset("INV_IMAGE", "abigail_flower_level2"),
-    -- Asset("INV_IMAGE", "abigail_flower_level3"),
-    -- I'm not quite happy with this but I'll make some adjustments so that I don't have to add in the new 
     Asset("INV_IMAGE", "abigail_flower"),
     Asset("INV_IMAGE", "abigail_flower2"),
     Asset("INV_IMAGE", "abigail_flower_haunted"),
-
-    -- Asset("INV_IMAGE", "abigail_flower_old"),        -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower2"),           -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower_haunted"),    -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower_wilted"), -- deprecated, left in for mods
 }
 
-local prefabs =
-{
-}
+local prefabs = {}
 
 local function UpdateInventoryActions(inst)
     inst:PushEvent("inventoryitem_updatetooltip")
@@ -240,16 +229,6 @@ local function fn()
     inst:AddTag("abigail_flower")
     inst:AddTag("give_dolongaction")
     -- inst:AddTag("ghostlyelixirable") -- for ghostlyelixirable component
-
-    -- inst.entity:SetPristine()
-    
-    -- inst.flower_skin_id = net_hash(inst.GUID, "abi_flower_skin_id", "abiflowerskiniddirty")
-    -- inst:ListenForEvent("abiflowerskiniddirty", OnSkinIDDirty)
-
-    -- if not TheWorld.ismastersim then
-    --     return inst
-    -- end
-
     inst:AddComponent("inventoryitem")
     inst:AddComponent("lootdropper")
 
@@ -261,26 +240,12 @@ local function fn()
     -- inst:AddComponent("ghostlyelixirable")
     -- inst.components.ghostlyelixirable.overrideapplytotargetfn = GetElixirTarget
 
-    -- inst:AddComponent("fuel")
-    -- inst.components.fuel.fuelvalue = TUNING.SMALL_FUEL
-
- --    MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
-    -- inst.components.burnable.fxdata = {}
- --    inst.components.burnable:AddBurnFX("campfirefire", Vector3(0, 0, 0))
-    
-
-    -- MakeSmallPropagator(inst)
-    -- MakeHauntableLaunch(inst)
-
     inst._updateinventoryiconfn = function(player, data) UpdateInventoryIcon(inst, player, data.level) end
     inst._oncontaineropenedfn = function(container, data) UpdateInventoryIcon(inst, data.doer) end
     inst._oncontainerclosedfn = function(container, data) UnlinkFromPlayer(inst) end
 
     inst:ListenForEvent("onputininventory", topocket)
     inst:ListenForEvent("ondropped", toground)
-
-    -- inst.OnEntitySleep = OnEntitySleep
-    -- inst.OnEntityWake = OnEntityWake
 
     inst._ongroundupdatetask = inst:DoPeriodicTask(0.5, UpdateGroundAnimation, math.random()*0.5)
     UpdateInventoryIcon(inst, nil, 0)
@@ -342,14 +307,6 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
             inst:AddComponent("updatelooper")
             inst.components.updatelooper:AddOnWallUpdateFn(AlignToTarget)
         end
-
-        -- inst.entity:SetPristine()
-
-        -- if not TheWorld.ismastersim then
-        --     return inst
-        -- end
-
-        -- inst.persists = false
 
         --Anim is padded with extra blank frames at the end
         -- moving to animqueover made this work

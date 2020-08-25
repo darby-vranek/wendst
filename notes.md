@@ -1,3 +1,9 @@
+# 8/23/20
+Fuck it. I'm gonna make a new stategraph for wendst
+
+# 8/22/20
+* I addedd some stuff with `GetBufferedAction` to commune sg to see if that stops it returning nil
+
 # 8/20/20
 * wendy summon animation cuts off before end of flower animation but otherwise seems to work
 	* it looks like "wendy_channel_pst" is getting cut off - it doesn't include the flower, so I'm going to have to figure that out again. I'm guessing that's why the anim is missing frames.
