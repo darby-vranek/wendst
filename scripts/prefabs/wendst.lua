@@ -1,7 +1,6 @@
 local MakePlayerCharacter = require("prefabs/player_common")
 local WendyFlowerOver = require("widgets/wendyflowerover")
 
--- require "stategraphs/SGwendst"
 
 local assets =
 {
@@ -107,7 +106,7 @@ local function ghostlybond_onsummon(inst, ghost)
     if inst.components.sanity ~= nil then
         inst.components.sanity:DoDelta(TUNING.SANITY_MED)
     end
-    inst.sg:GoToState("summon_abigail")
+    -- inst.sg:GoToState("summon_abigail")
 end
 
 local function ghostlybond_onrecall(inst, ghost, was_killed)
@@ -118,7 +117,7 @@ local function ghostlybond_onrecall(inst, ghost, was_killed)
     if inst.components.talker ~= nil then
         inst.components.talker:Say(GetString("wendy", was_killed and "ANNOUNCE_ABIGAIL_DEATH" or "ANNOUNCE_ABIGAIL_RETRIEVE"))
     end
-    inst.sg:GoToState("unsummon_abigail")
+    -- inst.sg:GoToState("unsummon_abigail")
     inst.components.ghostlybond.ghost.sg:GoToState("dissipate")
 end
 
@@ -131,7 +130,7 @@ local function ghostlybond_changebehaviour(inst, ghost)
         print("ghost:BecomeDefensive()")
         ghost:BecomeDefensive()
     end
-    inst.sg:GoToState("commune_with_abigail")
+    -- inst.sg:GoToState("commune_with_abigail")
     return true
 end
 
@@ -146,6 +145,9 @@ end
 
 local function CustomCombatDamage(inst, target)
     return 1
+    return (target.components.debuffable ~= nil and target.components.debuffable:HasDebuff("abigail_vex_debuff")) and TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD 
+        or (target == inst.components.ghostlybond.ghost and target:HasTag("abby")) and 0
+        or 1
 end
 
 -------------------------------------------------------------------------------
@@ -221,4 +223,5 @@ local function fn(inst)
     -- inst.OnDespawn = OnDespawn
     inst:ListenForEvent("death", ondeath)
 end
+
 return MakePlayerCharacter("wendst", prefabs, assets, fn, start_inv)

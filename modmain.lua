@@ -1,5 +1,4 @@
 
-
 PrefabFiles = {
 	"wendst",
 	"abby_flower",
@@ -50,6 +49,8 @@ local STRINGS = GLOBAL.STRINGS
 local SPEECH_WENDY = STRINGS.CHARACTERS.WENDY
 local SourceModifierList = require("sourcemodifierlist")
 local ACTIONS = GLOBAL.ACTIONS
+local Action = GLOBAL.Action
+local BufferedAction = GLOBAL.BufferedAction
 local ActionHandler = GLOBAL.ActionHandler
 local FRAMES = GLOBAL.FRAMES
 local TimeEvent = GLOBAL.TimeEvent
@@ -71,7 +72,7 @@ STRINGS.CHARACTERS.WENDST = SPEECH_WENDY
 
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "wendst")
 
-STRINGS.NAMES.ABBY_FLOWER = "Axbigail's Flower"
+STRINGS.NAMES.ABBY_FLOWER = "Abigail's Flower"
 STRINGS.NAMES.ABBY = "Abigail"
 
 -- dialogue
@@ -116,15 +117,6 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
 		-- "That's my twin sister, Abigail.",
 	-- },
 }
-
--- SPEECH_WENDY.MAKE_AGGRESSIVE = "Rile Up"
--- SPEECH_WENDY.MAKE_DEFENSIVE = "Soothe"
-
-SPEECH_WENDY.COMMUNEWITHSUMMONED = {
-	MAKE_AGGRESSIVE = "Rile Up",
-	MAKE_DEFENSIVE = "Soothe",
-}
-
 
 local total_day_time = TUNING.TOTAL_DAY_TIME
 local seg_time = TUNING.SEG_TIME
@@ -195,16 +187,17 @@ TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY = seg_time / 2
 
 
 local castsummon = function(act)
-	-- print('castsummon')
+	print('castsummon')
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
+		act.doer.sg:GoToState("summon_abigail")
 	 return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
 	end
-	print("castsummon")
 end
 
 local castunsummon = function(act)
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
 	 print("action - castunsummon")
+	 act.doer.sg:GoToState("unsummon_abigail")
 	 return act.doer.components.ghostlybond:Recall(false)
 	end
 	print("castunsummon")
@@ -213,8 +206,10 @@ end
 local communewithsummoned = function(act)
 	print("commune act")
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-		return act.doer.components.ghostlybond:ChangeBehaviour()
+		act.doer.sg:GoToState("commune_with_abigail")
+		return act.doer.components.ghostlybond:ChangeBehaviour(act.invobject.components.summoningitem)
 	end
+	return false
 end
 
 local communewithsummonedstrfn = function(act)
@@ -230,41 +225,45 @@ end
 
 -- 
 
+local act_castsummon = Action({mount_enabled=true}, 3, true, true)
+act_castsummon.id = "CASTSUMMON"
+act_castsummon.fn = castsummon
+act_castsummon.str = "Summon"
 
-local act_castsummon = {
-	id="CASTSUMMON",
-	instant=true,
-	rmb=true,
-	mount_enabled=true,
-	priority=3,
-	fn=castsummon,
-	str="Summon",
-}
+
+-- local act_castsummon = {
+-- 	id="CASTSUMMON",
+-- 	instant=true,
+-- 	mount_enabled=true,
+-- 	priority=3,
+-- 	fn=castsummon,
+-- 	str="Summon",
+-- }
 
 local act_castunsummon = {
 	id="CASTUNSUMMON",
 	instant=true,
-	mount_enabledd=true,
+	mount_enabled=true,
 	priority=3,
 	fn=castunsummon,
 	str="Recall",
 }
 
-local act_communewithsummoned = {
-	id="COMMUNEWITHSUMMONED",
-	instant=true,
-	mount_enabledd=true,
-	priority=3,
-	fn=communewithsummoned,
-	strfn=communewithsummonedstrfn,
-	str="Commune",
-}
-
-
+local act_communewithsummoned = Action({mount_enabled=true}, 3, true, true)
+act_communewithsummoned.id = "COMMUNEWITHSUMMONED"
+act_communewithsummoned.fn = communewithsummoned
+act_communewithsummoned.strfn = communewithsummonedstrfn
 
 AddAction(act_castsummon)
 AddAction(act_castunsummon)
 AddAction(act_communewithsummoned)
+
+STRINGS.ACTIONS.COMMUNEWITHSUMMONED = {
+	id ="COMMUNEWITHSUMMONED",
+	GENERIC = "Commune",
+	MAKE_AGGRESSIVE = "Rile Up",
+	MAKE_DEFENSIVE = "Soothe",
+}
 
 AddComponentPostInit("combat",
 	function(self, inst)
@@ -278,18 +277,18 @@ AddComponentPostInit("health",
 
 	end)
 
-
-
 AddStategraphState("wilson", State{
 	name = "summon_abigail",
 	tags = { "doing", "busy", "nodangle", "canrotate" },
 
 	onenter = function(inst)
+		print("summon onenter")
 		inst.components.locomotor:Stop()
 		inst.AnimState:PlayAnimation("wendy_channel")
 		inst.AnimState:PushAnimation("wendy_channel_pst", false)
 
 		if inst.bufferedaction ~= nil then
+			print("bufferedaction ~= nil")
 			local flower = inst.bufferedaction.invobject
 			if flower ~= nil then
 				inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
@@ -349,7 +348,6 @@ AddStategraphState("wilson", State{
 		end
 	end,
 })
-
 AddStategraphState("wilson", State{
     name = "commune_with_abigail",
     tags = { "doing", "busy", "nodangle" },
@@ -360,22 +358,16 @@ AddStategraphState("wilson", State{
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
 
-        -- if inst.bufferedaction ~= nil then
-        	print("inst.bufferedaction ~= nil")
-			local flower = inst.bufferedaction.invobject
-            -- if flower ~= nil then
+        if inst.sg.statemem.action then
+        	print("inst:GetBufferedAction() ~= nil")
+			local flower = inst:GetBufferedAction().invobject
+            if flower ~= nil then
             	print("flower ~= nil")
-                -- local skin_build = flower:GetSkinBuild()
-                -- if skin_build ~= nil then
-                --     inst.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
-                -- else
                 inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-                -- end
-			-- end
+			end
 
-            inst.sg.statemem.action = inst.bufferedaction
-
-        -- end
+            inst.sg.statemem.action = inst:GetBufferedAction()
+        end
     end,
 
     timeline =
@@ -405,7 +397,6 @@ AddStategraphState("wilson", State{
         end
     end,
 })
-
 AddStategraphState("wilson", State{
         name = "unsummon_abigail",
         tags = { "doing", "busy", "nodangle" },
@@ -477,12 +468,12 @@ AddStategraphState("wilson", State{
         end,
     })
 
-AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,
-        function(inst, action)
-        	print("ACTIONS.CASTUNSUMMON")
-            return action.invobject ~= nil and action.invobject:HasTag("abby_flower") and "unsummon_abigail" or "castspell"
-        end))
+AddStategraphActionHandler("wilson", ActionHandler(act_communewithsummoned, "commune_with_abigail"))
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTSUMMON, "summon_abigail"))
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,"unsummon_abigail"))
 
+
+AddStategraphPostInit("wilson", SgPostInit)
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")

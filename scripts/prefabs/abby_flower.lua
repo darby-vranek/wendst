@@ -3,23 +3,12 @@ local assets =
     Asset("ANIM", "anim/abigail_flower.zip"),
     Asset("ANIM", "anim/abigail_flower_rework.zip"),
 
-    -- Asset("INV_IMAGE", "abigail_flower_level0"),
-    -- Asset("INV_IMAGE", "abigail_flower_level2"),
-    -- Asset("INV_IMAGE", "abigail_flower_level3"),
-    -- I'm not quite happy with this but I'll make some adjustments so that I don't have to add in the new 
     Asset("INV_IMAGE", "abigail_flower"),
     Asset("INV_IMAGE", "abigail_flower2"),
     Asset("INV_IMAGE", "abigail_flower_haunted"),
-
-    -- Asset("INV_IMAGE", "abigail_flower_old"),        -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower2"),           -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower_haunted"),    -- deprecated, left in for mods
-    -- Asset("INV_IMAGE", "abigail_flower_wilted"), -- deprecated, left in for mods
 }
 
-local prefabs =
-{
-}
+local prefabs = {}
 
 local function UpdateInventoryActions(inst)
     inst:PushEvent("inventoryitem_updatetooltip")
@@ -28,7 +17,7 @@ end
 local function UpdateInventoryIcon(inst, player, level)
     if inst._playerlink ~= player then
         if inst._playerlink ~= nil then
-         inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+            inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
         end
 
         if player ~= nil and player.components.ghostlybond ~= nil then
@@ -37,13 +26,13 @@ local function UpdateInventoryIcon(inst, player, level)
 
             UpdateInventoryActions(inst)
             if inst._inventoryactionstask == nil then
-                inst._inventoryactionstask = inst:DoPeriodicTask(0.0, UpdateInventoryActions)
+                inst._inventoryactionstask = inst:DoPeriodicTask(0.1, UpdateInventoryActions)
             end
         else
             inst._playerlink = nil
             if inst._inventoryactionstask ~= nil then
-                 inst._inventoryactionstask:Cancel()
-                 inst._inventoryactionstask = nil
+                inst._inventoryactionstask:Cancel()
+                inst._inventoryactionstask = nil
             end
         end
     end
@@ -51,13 +40,46 @@ local function UpdateInventoryIcon(inst, player, level)
     level = level or (player ~= nil and player.components.ghostlybond ~= nil) and player.components.ghostlybond.bondlevel or 0
     if level == 1 then
         inst.components.inventoryitem:ChangeImageName("abigail_flower")
-    elseif level == 2 then
-        inst.components.inventoryitem:ChangeImageName("abigail_flower2")
     else
-        inst.components.inventoryitem:ChangeImageName("abigail_flower_haunted")
+        inst.components.inventoryitem:ChangeImageName(("abigail_flower") .. "_level" .. (level or 0))
     end
     inst._bond_level = level
 end
+
+-- local function UpdateInventoryIcon(inst, player, level)
+--     -- if inst._playerlink ~= player then
+--         -- if inst._playerlink ~= nil then
+--         --  inst:RemoveEventCallback("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+--         -- end
+
+--         if player ~= nil and player.components.ghostlybond ~= nil then
+--             inst._playerlink = player
+--             inst:ListenForEvent("ghostlybond_level_change", inst._updateinventoryiconfn, inst._playerlink)
+
+--             UpdateInventoryActions(inst)
+--             if inst._inventoryactionstask == nil then
+--                 inst._inventoryactionstask = inst:DoPeriodicTask(0.0, UpdateInventoryActions)
+--             end
+--         -- else
+--         --  inst._playerlink = nil
+
+--         --  if inst._inventoryactionstask ~= nil then
+--         --      inst._inventoryactionstask:Cancel()
+--         --      inst._inventoryactionstask = nil
+--         --  end
+--         end
+--     -- end
+
+--     level = level or (player ~= nil and player.components.ghostlybond ~= nil) and player.components.ghostlybond.bondlevel or 0
+--     if level == 1 then
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower")
+--     elseif level == 2 then
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower2")
+--     else
+--         inst.components.inventoryitem:ChangeImageName("abigail_flower_haunted")
+--     end
+--     inst._bond_level = level
+-- end
 
 local function UpdateGroundAnimation(inst)
     local x, y, z = inst.Transform:GetWorldPosition()
@@ -206,16 +228,6 @@ local function fn()
     inst:AddTag("abigail_flower")
     inst:AddTag("give_dolongaction")
     -- inst:AddTag("ghostlyelixirable") -- for ghostlyelixirable component
-
-    -- inst.entity:SetPristine()
-    
-    -- inst.flower_skin_id = net_hash(inst.GUID, "abi_flower_skin_id", "abiflowerskiniddirty")
-    -- inst:ListenForEvent("abiflowerskiniddirty", OnSkinIDDirty)
-
-    -- if not TheWorld.ismastersim then
-    --     return inst
-    -- end
-
     inst:AddComponent("inventoryitem")
     inst:AddComponent("lootdropper")
 
@@ -227,26 +239,12 @@ local function fn()
     -- inst:AddComponent("ghostlyelixirable")
     -- inst.components.ghostlyelixirable.overrideapplytotargetfn = GetElixirTarget
 
-    -- inst:AddComponent("fuel")
-    -- inst.components.fuel.fuelvalue = TUNING.SMALL_FUEL
-
- --    MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
-    -- inst.components.burnable.fxdata = {}
- --    inst.components.burnable:AddBurnFX("campfirefire", Vector3(0, 0, 0))
-    
-
-    -- MakeSmallPropagator(inst)
-    -- MakeHauntableLaunch(inst)
-
     inst._updateinventoryiconfn = function(player, data) UpdateInventoryIcon(inst, player, data.level) end
     inst._oncontaineropenedfn = function(container, data) UpdateInventoryIcon(inst, data.doer) end
     inst._oncontainerclosedfn = function(container, data) UnlinkFromPlayer(inst) end
 
     inst:ListenForEvent("onputininventory", topocket)
     inst:ListenForEvent("ondropped", toground)
-
-    -- inst.OnEntitySleep = OnEntitySleep
-    -- inst.OnEntityWake = OnEntityWake
 
     inst._ongroundupdatetask = inst:DoPeriodicTask(0.5, UpdateGroundAnimation, math.random()*0.5)
     UpdateInventoryIcon(inst, nil, 0)
@@ -310,17 +308,9 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
             inst.components.updatelooper:AddOnWallUpdateFn(AlignToTarget)
         end
 
-        -- inst.entity:SetPristine()
-
-        -- if not TheWorld.ismastersim then
-        --     return inst
-        -- end
-
-        -- inst.persists = false
-
         --Anim is padded with extra blank frames at the end
         -- moving to animqueover made this work
-        inst:ListenForEvent("animqueueover", inst.Remove)
+        inst:ListenForEvent("animqueover", inst.Remove)
 
         return inst
     end
