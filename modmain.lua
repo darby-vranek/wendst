@@ -118,18 +118,6 @@ SPEECH_WENDY.DESCRIBE.ABBY = {
 	-- },
 }
 
-STRINGS.ACTIONS.CASTSUMMON =
-{
-	GENERIC = "Summon"
-}
-
-STRINGS.ACTIONS.CASTUNSUMMON =
-{
-	GENERIC = "Recall"
-}
-
-
-
 local total_day_time = TUNING.TOTAL_DAY_TIME
 local seg_time = TUNING.SEG_TIME
 -- tuning
@@ -201,7 +189,7 @@ TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY = seg_time / 2
 local castsummon = function(act)
 	print('castsummon')
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-		-- act.doer.sg:GoToState("summon_abigail")
+		act.doer.sg:GoToState("summon_abigail")
 	 return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
 	end
 end
@@ -271,6 +259,7 @@ AddAction(act_castunsummon)
 AddAction(act_communewithsummoned)
 
 STRINGS.ACTIONS.COMMUNEWITHSUMMONED = {
+	id ="COMMUNEWITHSUMMONED",
 	GENERIC = "Commune",
 	MAKE_AGGRESSIVE = "Rile Up",
 	MAKE_DEFENSIVE = "Soothe",
@@ -479,7 +468,12 @@ AddStategraphState("wilson", State{
         end,
     })
 
-AddStategraphActionHandler("wilson", ActionHandler(act_communewithsummoned,"commune_with_abigail"))
+AddStategraphActionHandler("wilson", ActionHandler(act_communewithsummoned, "commune_with_abigail"))
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTSUMMON, "summon_abigail"))
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,"unsummon_abigail"))
+
+
+AddStategraphPostInit("wilson", SgPostInit)
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")

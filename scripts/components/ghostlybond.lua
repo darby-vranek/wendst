@@ -75,6 +75,8 @@ end
 function GhostlyBond:OnSave()
 	print("saved")
 	return {
+		bondlevel = self.bondlevel,
+		elapsedtime = self.bondleveltimer,
 		ghost = self.ghost ~= nil and self.ghost:GetSaveRecord() or nil,
 		ghostinlimbo = self.ghost ~= nil and self.ghost.inlimbo or nil,
 	}
@@ -82,19 +84,35 @@ end
 
 function GhostlyBond:OnLoad(data)
 	print("GhostlyBond:OnLoad")
-	print(self.ghost == nil)
 	if data ~= nil then
-		print("GhostlyBond:OnLoad | data ~= nil")
+		print("load data ~= nil")
+		self:SetBondLevel(data.bondlevel, data.elapsedtime, true)
+
 		if data.ghost ~= nil then
-			print("GhostlyBond:OnLoad | data.ghost ~= nil")
-			print(data.ghost.prefab)
-			self.spawnghosttask:Cancel()
-			self.spawnghosttask = nil
-			-- local ghost = SpawnSaveRecord(data.ghost)
-			-- self.ghost = ghost
-			-- print(ghost)
-			-- print(ghost.prefab)
+			if self.spawnghosttask ~= nil then
+				self.spawnghosttask:Cancel()
+				self.spawnghosttask = nil
+			end
+
+			local ghost = SpawnSaveRecord(data.ghost)
+			self.ghost = ghost
+			if ghost ~= nil then
+				-- if self.inst.migrationpets ~= nil then
+				-- 	table.insert(self.inst.migrationpets, ghost)
+				-- end
+				ghost:LinkToPlayer(self.inst)
+
+				self.inst:ListenForEvent("onremove", self._ghost_onremove, ghost)
+				self.inst:ListenForEvent("death", self._ghost_death, ghost)
+			end
+
+			if data.ghostinlimbo then
+				self:RecallComplete()
+			else
+				self:SummonComplete()
+			end
 		end
+
 	end
 end
 

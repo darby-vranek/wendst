@@ -310,7 +310,7 @@ local function MakeSummonFX(anim, use_anim_for_build, is_mounted)
 
         --Anim is padded with extra blank frames at the end
         -- moving to animqueover made this work
-        inst:ListenForEvent("animqueueover", inst.Remove)
+        inst:ListenForEvent("animqueover", inst.Remove)
 
         return inst
     end
