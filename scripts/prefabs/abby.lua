@@ -517,6 +517,7 @@ local function fn(Sim)
     -- UpdateDamage(inst, TheWorld.state.phase)
 
     inst.UpdateDamage = UpdateDamage
+    inst:UpdateDamage()
 
     inst:ListenForEvent("phasechange", function()
         inst:UpdateDamage() end, GetWorld())

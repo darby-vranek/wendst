@@ -1,5 +1,6 @@
 # 8/26/20
-* I couldn't get the `ghostlybond_level_change` event to register with ghost sister, so I just directly called the update function on the ghost instead of using an event listener
+* I couldn't get the `ghostlybond_level_change` event to register with ghost sister, so I just directly called the update function on the ghost instead of using an event
+* `wendyflowerover` works now! I hadn't defined the HUD piece, which is why it didn't work earlier
 
 # 8/22/20
 * I addedd some stuff with `GetBufferedAction` to commune sg to see if that stops it returning nil

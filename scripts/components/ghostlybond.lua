@@ -86,7 +86,6 @@ function GhostlyBond:OnLoad(data)
 	print("GhostlyBond:OnLoad")
 	if data ~= nil then
 		print("load data ~= nil")
-		self:SetBondLevel(data.bondlevel, data.elapsedtime, true)
 
 		if data.ghost ~= nil then
 			if self.spawnghosttask ~= nil then
@@ -101,6 +100,7 @@ function GhostlyBond:OnLoad(data)
 				-- 	table.insert(self.inst.migrationpets, ghost)
 				-- end
 				ghost:LinkToPlayer(self.inst)
+				self:SetBondLevel(data.bondlevel, data.elapsedtime, true)
 
 				self.inst:ListenForEvent("onremove", self._ghost_onremove, ghost)
 				self.inst:ListenForEvent("death", self._ghost_death, ghost)
