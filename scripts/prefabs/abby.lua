@@ -374,8 +374,8 @@ local function linktoplayer(inst, player)
     player.components.leader:AddFollower(inst)
 
     UpdateGhostlyBondLevel(inst, player.components.ghostlybond.bondlevel)
-    inst:ListenForEvent("ghostlybond_level_change", inst._on_ghostlybond_level_change, player)
-    inst:ListenForEvent("onremove", inst._onlostplayerlink, player)
+    inst:ListenForEvent("ghostlybond_level_change", inst.on_ghostlybond_level_change, player)
+    -- inst:ListenForEvent("onremove", inst._onlostplayerlink, player)
 
     player.components.sanity:DoDelta(TUNING.SANITY_MED)
 end
@@ -508,7 +508,6 @@ local function fn(Sim)
     inst.IsWithinDefensiveRange = IsWithinDefensiveRange
 
     inst.LinkToPlayer = linktoplayer
-    -- inst.LinkToPlayer()
     
 
     inst.is_defensive = true
@@ -518,6 +517,7 @@ local function fn(Sim)
     -- UpdateDamage(inst, TheWorld.state.phase)
 
     inst.UpdateDamage = UpdateDamage
+    inst:UpdateDamage()
 
     inst:ListenForEvent("phasechange", function()
         inst:UpdateDamage() end, GetWorld())
@@ -527,15 +527,14 @@ local function fn(Sim)
     -- inst:ListenForEvent( "nighttime", function() inst:UpdateDamage() end , GetWorld())
 
     -- not sure if I need this
-    inst:UpdateDamage()
+    -- inst:UpdateDamage()
 
     -- inst:UpdateDamage()
 
     
 
     inst._on_ghostlybond_level_change = function(player, data) on_ghostlybond_level_change(inst, player, data) end
-    inst._onlostplayerlink = function(player) onlostplayerlink(inst, player) end
-
+    -- inst._onlostplayerlink = function(player) onlostplayerlink(inst, player) end
     return inst
 end
 

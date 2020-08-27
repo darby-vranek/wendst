@@ -473,7 +473,7 @@ AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTSUMMON, "summon_a
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.CASTUNSUMMON,"unsummon_abigail"))
 
 
-AddStategraphPostInit("wilson", SgPostInit)
+-- AddStategraphPostInit("wilson", SgPostInit)
 
 AddMinimapAtlas("minimap/wendst.xml")
 AddModCharacter("wendst")

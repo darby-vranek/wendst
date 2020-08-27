@@ -37,8 +37,13 @@ local start_inv =
 
 
 local function OnBondLevelDirty(inst)
-    -- if inst.HUD ~= nil and not inst:HasTag("playerghost") then
-        local bond_level = inst._bondlevel:value()
+    print("OnBondLevelDirty")
+    if inst.HUD ~= nil and not inst:HasTag("playerghost") then
+        if inst.HUD.wendyflowerover == nil then
+            inst.HUD.wendyflowerover = inst.HUD.overlayroot:AddChild(WendyFlowerOver(inst))
+            inst.HUD.wendyflowerover:MoveToBack()
+        end
+        local bond_level = inst._bondlevel
         if bond_level > 1 then
             if inst.HUD.wendyflowerover ~= nil then
                 inst.HUD.wendyflowerover:Play( bond_level )

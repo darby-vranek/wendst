@@ -85,7 +85,6 @@ function GhostlyBond:OnLoad(data)
 	print("GhostlyBond:OnLoad")
 	if data ~= nil then
 		print("load data ~= nil")
-		self:SetBondLevel(data.bondlevel, data.elapsedtime, true)
 
 		if data.ghost ~= nil then
 			if self.spawnghosttask ~= nil then
@@ -100,6 +99,7 @@ function GhostlyBond:OnLoad(data)
 				-- 	table.insert(self.inst.migrationpets, ghost)
 				-- end
 				ghost:LinkToPlayer(self.inst)
+				self:SetBondLevel(data.bondlevel, data.elapsedtime, true)
 
 				self.inst:ListenForEvent("onremove", self._ghost_onremove, ghost)
 				self.inst:ListenForEvent("death", self._ghost_death, ghost)
@@ -154,10 +154,15 @@ function GhostlyBond:SetBondLevel(level, time, isloading)
 		self.inst:StartUpdatingComponent(self)
 	end
 
-		if self.onbondlevelchangefn ~= nil then
-			self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
-		end
-		self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
+	if self.onbondlevelchangefn ~= nil then
+		-- print("onbondlevelchangefn")
+		self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
+	end
+	print("return to setbondlevel()")
+
+	self.ghost._on_ghostlybond_level_change(self.inst, {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
+	-- self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
+	-- print("pushed event")
 end
 
 -- end bondlevel stuff
