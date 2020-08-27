@@ -240,7 +240,7 @@ act_castsummon.str = "Summon"
 -- 	str="Summon",
 -- }
 
-local act_castunsummon = Action({mount_enabled=true}, 3, false, true)
+local act_castunsummon = Action({mount_enabled=true}, math.huge, false, true)
 act_castunsummon.id = "CASTUNSUMMON"
 act_castunsummon.fn = castunsummon
 act_castunsummon.str = "Recall"
@@ -348,20 +348,18 @@ AddStategraphState("wilson", State{
     tags = { "doing", "busy", "nodangle" },
 
 	onenter = function(inst)
-		print("onenter commune_with_abigail")
         inst.components.locomotor:Stop()
         inst.AnimState:PlayAnimation("wendy_commune_pre")
         inst.AnimState:PushAnimation("wendy_commune_pst", false)
 
-        if inst.sg.statemem.action then
-        	print("inst:GetBufferedAction() ~= nil")
-			local flower = inst:GetBufferedAction().invobject
+        if inst.bufferedaction ~= nil then
+            local flower = inst.bufferedaction.invobject
             if flower ~= nil then
-            	print("flower ~= nil")
-                inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-			end
+                inst.AnimState:OverrideSymbol("flower", "abigail_flower_rework", "flower")
+            end
 
-            inst.sg.statemem.action = inst:GetBufferedAction()
+            inst.sg.statemem.action = inst.bufferedaction
+
         end
     end,
 
