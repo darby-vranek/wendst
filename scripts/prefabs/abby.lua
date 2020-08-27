@@ -18,9 +18,11 @@ local prefabs =
     "abigaillevelupfx",
     "abigail_vex_debuff",
 }
- 
 
 local brain = require("brains/abbybrain")
+
+local ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW * TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
+local COMBAT_TARGET_DSQ = TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE * TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE
 
 local function UpdateGhostlyBondLevel(inst, level)
     print("abby:UpdateGhostlyBondLevel("..level..")")
@@ -43,7 +45,6 @@ local function UpdateGhostlyBondLevel(inst, level)
         --     inst._playerlink.components.pethealthbar:SetMaxHealth(max_health)
         -- end
     end
-
     local light_vals = TUNING.ABIGAIL_LIGHTING[level] or TUNING.ABIGAIL_LIGHTING[1]
     if light_vals.r ~= 0 then
         inst.Light:Enable(not inst.inlimbo)
@@ -57,7 +58,7 @@ local function UpdateGhostlyBondLevel(inst, level)
 end
 
 
-local ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ = TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW * TUNING.ABIGAIL_DEFENSIVE_MAX_FOLLOW
+
 
 local function IsWithinDefensiveRange(inst)
     return inst._playerlink and inst:GetDistanceSqToInst(inst._playerlink) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ
@@ -65,19 +66,16 @@ end
 
 -- local COMBAT_MUSTHAVE_TAGS = { "combat", "health" }
 -- I needed to clear this for it to work and so far no problems ahahah
+-- this may actually turn out to be a problem - abby has been spontaneously attacking crabbits while in defensive mode, which she doesn't seem to do with things like butterflies or rabbits (though I should check that one out)
 local COMBAT_MUSTHAVE_TAGS = {}
 local COMBAT_CANTHAVE_TAGS = { "INLIMBO", "noauradamage" }
-
 local COMBAT_MUSTONEOF_TAGS_AGGRESSIVE = { "monster", "prey", "insect", "hostile", "character", "animal" }
 local COMBAT_MUSTONEOF_TAGS_DEFENSIVE = { "monster", "prey" }
-
-local COMBAT_TARGET_DSQ = TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE * TUNING.ABIGAIL_COMBAT_TARGET_DISTANCE
 
 local function HasFriendlyLeader(inst, target)
     local leader = inst.components.follower.leader
     if leader ~= nil then
         local target_leader = (target.components.follower ~= nil) and target.components.follower.leader or nil
-
         if target_leader and target_leader.components.inventoryitem then
             target_leader = target_leader.components.inventoryitem.GetGrandOwner()
             -- Don't attack followers if their follow object has no owner
@@ -90,7 +88,6 @@ local function HasFriendlyLeader(inst, target)
         target_leader ~= nil 
             and (target_leader == leader or (target_leader:HasTag("player"))))
     end
-
     return false    
 end
 
@@ -156,17 +153,6 @@ local function AggressiveRetarget(inst)
     end
 end
 
--- this is gonna cause me some issues without the ectoherbology stuff in place - I shouldn't run this
--- local function StartForceField(inst)
---     if not inst.sg:HasStateTag("dissipate") and (inst.components.health == nil or not inst.components.health:IsDead()) then
---         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
---         -- commented out as I do not have elixirs in place
---         -- inst.components.debuffable:AddDebuff("forcefield", elixir_buff ~= nil and elixir_buff.potion_tunings.shield_prefab or "abigailforcefield")
---         inst.components.debuffable:AddDebuff("forcefield", "abigailforcefield")
---         -- print("would use forcefield here if debuff existed")
---     end
--- end
-
 -- removed elixir buff from line adding forcefield debuff until I get that in place
 local function StartForceField(inst)
     print("abby:StartForceField()")
@@ -176,38 +162,6 @@ local function StartForceField(inst)
         print("would use forcefield here if debuff existed")
     end
 end
-
--- local function OnAttacked(inst, data)
---     print("abby:OnAttacked(data)")
---     if data.attacker == nil then
---         inst.components.combat:SetTarget(nil)
---     elseif not data.attacker:HasTag("noauradamage") then
---         if not inst.is_defensive then
---             inst.components.combat:SetTarget(data.attacker)
---         elseif inst:IsWithinDefensiveRange() and inst._playerlink:GetDistanceSqToInst(data.attacker) < ABIGAIL_DEFENSIVE_MAX_FOLLOW_DSQ then
---             -- Basically, we avoid targetting the attacker if they're far enough away that we wouldn't reach them anyway.
---             inst.components.combat:SetTarget(data.attacker)
---         end
---     end
-
-
---     -- commenting this out as I don't have ectoherbology set up
---     if inst.components.debuffable:HasDebuff("forcefield") then
---         if data.attacker ~= nil and data.attacker ~= inst._playerlink and data.attacker.components.combat ~= nil then
---     --         local elixir_buff = inst.components.debuffable:GetDebuff("elixir_buff")
---     --         if elixir_buff ~= nil and elixir_buff.prefab == "ghostlyelixir_retaliation_buff" then
---             local retaliation = SpawnPrefab("abigail_retaliation")
---             retaliation:SetRetaliationTarget(data.attacker)
---     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
---     --         else
---     --             inst.SoundEmitter:PlaySound("dontstarve/characters/wendy/abigail/shield/on")
---         end
---     --     end
---     end
-
---     StartForceField(inst)
--- end
-
 
 local function OnAttacked(inst, data)
     if data.attacker == nil then

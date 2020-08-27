@@ -189,7 +189,7 @@ TUNING.GHOSTLYELIXIR_DRIP_FX_DELAY = seg_time / 2
 local castsummon = function(act)
 	print('castsummon')
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-		act.doer.sg:GoToState("summon_abigail")
+		-- act.doer.sg:GoToState("summon_abigail")
 	 return act.doer.components.ghostlybond:Summon(act.invobject.components.summoningitem.inst)
 	end
 end
@@ -197,7 +197,7 @@ end
 local castunsummon = function(act)
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
 	 print("action - castunsummon")
-	 act.doer.sg:GoToState("unsummon_abigail")
+	 -- act.doer.sg:GoToState("unsummon_abigail")
 	 return act.doer.components.ghostlybond:Recall(false)
 	end
 	print("castunsummon")
@@ -206,7 +206,7 @@ end
 local communewithsummoned = function(act)
 	print("commune act")
 	if act.invobject ~= nil and act.invobject.components.summoningitem and act.doer ~= nil and act.doer.components.ghostlybond ~= nil then
-		act.doer.sg:GoToState("commune_with_abigail")
+		-- act.doer.sg:GoToState("commune_with_abigail")
 		return act.doer.components.ghostlybond:ChangeBehaviour(act.invobject.components.summoningitem)
 	end
 	return false
@@ -225,7 +225,7 @@ end
 
 -- 
 
-local act_castsummon = Action({mount_enabled=true}, 3, true, true)
+local act_castsummon = Action({mount_enabled=true}, 3, false, true)
 act_castsummon.id = "CASTSUMMON"
 act_castsummon.fn = castsummon
 act_castsummon.str = "Summon"
@@ -240,16 +240,12 @@ act_castsummon.str = "Summon"
 -- 	str="Summon",
 -- }
 
-local act_castunsummon = {
-	id="CASTUNSUMMON",
-	instant=true,
-	mount_enabled=true,
-	priority=3,
-	fn=castunsummon,
-	str="Recall",
-}
+local act_castunsummon = Action({mount_enabled=true}, 3, false, true)
+act_castunsummon.id = "CASTUNSUMMON"
+act_castunsummon.fn = castunsummon
+act_castunsummon.str = "Recall"
 
-local act_communewithsummoned = Action({mount_enabled=true}, 3, true, true)
+local act_communewithsummoned = Action({mount_enabled=true}, 3, false, true)
 act_communewithsummoned.id = "COMMUNEWITHSUMMONED"
 act_communewithsummoned.fn = communewithsummoned
 act_communewithsummoned.strfn = communewithsummonedstrfn
@@ -288,14 +284,13 @@ AddStategraphState("wilson", State{
 		inst.AnimState:PushAnimation("wendy_channel_pst", false)
 
 		if inst.bufferedaction ~= nil then
-			print("bufferedaction ~= nil")
-			local flower = inst.bufferedaction.invobject
-			if flower ~= nil then
-				inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-			end
+            -- local flower = inst.bufferedaction.invobject
+            -- if flower ~= nil then
+            --     inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+            -- end
 
-			inst.sg.statemem.action = inst.bufferedaction
-		end
+            inst.sg.statemem.action = inst.bufferedaction
+        end
 	end,
 
 	timeline =
@@ -323,7 +318,7 @@ AddStategraphState("wilson", State{
 			if inst:PerformBufferedAction() then
 				inst.sg.statemem.fx = nil
 			else
-				-- inst.sg:GoToState("idle")
+				inst.sg:GoToState("idle")
 			end
 		end),
 		TimeEvent(74 * FRAMES, function(inst) inst.sg:RemoveStateTag("busy") end),
@@ -333,7 +328,7 @@ AddStategraphState("wilson", State{
 	{
 		EventHandler("animqueueover", function(inst)
 			if inst.AnimState:AnimDone() then
-				inst.sg:GoToState("idle")
+				-- inst.sg:GoToState("idle")
 			end
 		end),
 	},
@@ -407,14 +402,14 @@ AddStategraphState("wilson", State{
             inst.AnimState:PushAnimation("wendy_recall_pst", false)
 
             if inst.bufferedaction ~= nil then
-                local flower = inst.bufferedaction.invobject
-                if flower ~= nil then
-                    inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
-                end
+                -- local flower = inst.bufferedaction.invobject
+                -- if flower ~= nil then
+                --     inst.AnimState:OverrideSymbol("flower", flower.AnimState:GetBuild(), "flower")
+                -- end
 
                 inst.sg.statemem.action = inst.bufferedaction
 
-                inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ABIGAIL_RETRIEVE"))
+                -- inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ABIGAIL_RETRIEVE"))
             end
         end,
 
@@ -434,7 +429,7 @@ AddStategraphState("wilson", State{
                     flower = inst.bufferedaction.invobject
                 end
 
-                -- if inst:PerformBufferedAction() then
+                if inst:PerformBufferedAction() then
                     local fx = SpawnPrefab(inst.components.rider:IsRiding() and "abigailunsummonfx_mount" or "abigailunsummonfx")
                     fx.entity:SetParent(inst.entity)
                     fx.Transform:SetRotation(inst.Transform:GetRotation())
@@ -446,9 +441,9 @@ AddStategraphState("wilson", State{
                         --     fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", flower.GUID, flower.AnimState:GetBuild() )
                         -- end
                     -- end
-                -- else
-                    -- inst.sg:GoToState("idle")
-                -- end
+                else
+                    inst.sg:GoToState("idle")
+                end
             end),
         },
 		events =

@@ -26,11 +26,6 @@ local function startaura(inst)
     -- if skin_build ~= nil then
     --     inst.attack_fx.AnimState:OverrideItemSkinSymbol("flower", skin_build, "flower", inst.GUID, "abigail_attack_fx" )
     -- end
-    
-  -- inst.attack_fx_ground = SpawnPrefab("abigail_attack_fx_ground")
-  -- inst:AddChild(inst.attack_fx_ground)
-  -- inst.attack_fx_ground.AnimState:PlayAnimation(attack_anim .. "_ground_pre")
-  -- inst.attack_fx_ground.AnimState:PushAnimation(attack_anim .. "_ground_loop", true)
 end
 
 local function stopaura(inst)

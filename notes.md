@@ -1,3 +1,8 @@
+# 8/27/20
+* It looks like `abigail.lua` directly sends her into her specific sg state
+* setting it so that actions aren't instant has fixed summon, though wendy's face gets stuck, however immediately fixes upon moving to another anim state
+* unsummon does not work - the ghost doesn't disappear
+
 # 8/26/20
 * I couldn't get the `ghostlybond_level_change` event to register with ghost sister, so I just directly called the update function on the ghost instead of using an event
 * `wendyflowerover` works now! I hadn't defined the HUD piece, which is why it didn't work earlier

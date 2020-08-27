@@ -49,7 +49,7 @@ local function OnBondLevelDirty(inst)
                 inst.HUD.wendyflowerover:Play( bond_level )
             end
         end
-    -- end
+    end
 end
 
 -- not sure if I need this
@@ -149,9 +149,8 @@ end
 -- end
 
 local function CustomCombatDamage(inst, target)
-    return 1
     return (target.components.debuffable ~= nil and target.components.debuffable:HasDebuff("abigail_vex_debuff")) and TUNING.ABIGAIL_VEX_GHOSTLYFRIEND_DAMAGE_MOD 
-        or (target == inst.components.ghostlybond.ghost and target:HasTag("abby")) and 0
+        or (target == inst.components.ghostlybond.ghost and target:HasTag("abigail")) and 0
         or 1
 end
 
@@ -219,6 +218,7 @@ local function fn(inst)
     -- end
 
     inst.AnimState:AddOverrideBuild("wendy_channel")
+    inst.AnimState:AddOverrideBuild("wendy_channel_flower")
     inst.AnimState:AddOverrideBuild("player_idles_wendy")
     inst.AnimState:AddOverrideBuild("wendy_commune")
 
