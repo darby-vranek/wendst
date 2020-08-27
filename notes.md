@@ -1,5 +1,5 @@
-# 8/23/20
-Fuck it. I'm gonna make a new stategraph for wendst
+# 8/26/20
+* I couldn't get the `ghostlybond_level_change` event to register with ghost sister, so I just directly called the update function on the ghost instead of using an event listener
 
 # 8/22/20
 * I addedd some stuff with `GetBufferedAction` to commune sg to see if that stops it returning nil

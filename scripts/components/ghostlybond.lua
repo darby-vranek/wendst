@@ -161,6 +161,8 @@ function GhostlyBond:SetBondLevel(level, time, isloading)
 		self.onbondlevelchangefn(self.inst, self.ghost, level, prev_level, isloading)
 	end
 	print("return to setbondlevel()")
+
+	self.ghost._on_ghostlybond_level_change(self.inst, {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
 	-- self.inst:PushEvent("ghostlybond_level_change", {ghost = self.ghost, level = level, prev_level = prev_level, isloading = isloading})
 	-- print("pushed event")
 end
